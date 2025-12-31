@@ -2,7 +2,25 @@ import React from "react";
 import { Item, ItemDescription, ItemTitle } from "../ui/item";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
-function ChatMessage({ right, message, userName, photo }) {
+function ChatMessage({ right, message, userName, photo, timestamp }) {
+  const formatChatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+
+    const isToday = date.toDateString() === now.toDateString();
+
+    if (isToday) {
+      return date.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+    });
+  };
   return (
     <div className={`flex w-full ${right && "justify-end"}`}>
       <div
@@ -24,8 +42,9 @@ function ChatMessage({ right, message, userName, photo }) {
             )
           }
         </div>
-        <Item className={`flex  `} variant="outline">
-          {message}
+        <Item className={`flex flex-col ${right ?"items-end":"items-start"} gap-1`} variant="outline">
+          <span>{message}</span>
+          <span className="text-xs text-secondary-foreground">{formatChatTime(timestamp)}</span>
         </Item>
       </div>
     </div>

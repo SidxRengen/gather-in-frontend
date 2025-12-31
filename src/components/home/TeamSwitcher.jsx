@@ -21,7 +21,6 @@ import {
 import { cn } from "@/lib/utils";
 import authServices from "@/services/authServices";
 
-
 export function TeamSwitcher({ allUsers, setCurrentChatUser }) {
   const { isMobile } = useSidebar();
   return (
@@ -55,7 +54,9 @@ export function TeamSwitcher({ allUsers, setCurrentChatUser }) {
               Users
             </DropdownMenuLabel>
             {allUsers
-              ?.filter((user) => user.email !== authServices?.getCurrentUser()?.email)
+              ?.filter(
+                (user) => user.email !== authServices?.getCurrentUser()?.email
+              )
               ?.map((user, index) => (
                 <DropdownMenuItem
                   key={user.email}

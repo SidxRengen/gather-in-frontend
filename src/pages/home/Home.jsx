@@ -21,16 +21,19 @@ import AllChatsBox from "@/components/home/AllChatsBox";
 import ChatBox from "@/components/home/ChatBox";
 import { useUserContext } from "@/context/UsersProvider";
 import Loader from "@/components/home/Loader";
+import { PlusCircle } from "lucide-react";
 
 function Home() {
-  const { allUsers, errorMessage, loading, fetchAllUsers } = useUserContext();
-  console.log("allUsers", allUsers);
+  const { allActiveUsers, allUsers, errorMessage, loading, fetchAllUsers } =
+    useUserContext();
+  const [chatType, setChatType] = useState("active");
   const [currentChatUser, setCurrentChatUser] = useState(null);
   useEffect(() => {
     if (errorMessage) {
       toast.error(errorMessage);
       return;
     }
+    console.log("allUsers from home", allUsers);
   }, [allUsers]);
   return (
     <SidebarProvider
@@ -40,9 +43,10 @@ function Home() {
         setCurrentChatUser={setCurrentChatUser}
         allUsers={allUsers}
         toast={toast}
+        allActiveUsers={allActiveUsers}
       />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex  h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -52,7 +56,12 @@ function Home() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <div onClick={() => setCurrentChatUser(null)}>
+                  <div
+                    onClick={() => {
+                      setChatType("active");
+                      setCurrentChatUser(null);
+                    }}
+                  >
                     <BreadcrumbLink>Start a Chat</BreadcrumbLink>
                   </div>
                 </BreadcrumbItem>
@@ -69,6 +78,18 @@ function Home() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <div className="flex gap-2 items-center ml-auto mr-10">
+            <div
+              onClick={() => {
+                setChatType("all");
+                setCurrentChatUser(null);
+              }}
+              className="bg-sidebar-primary  text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
+            >
+              <PlusCircle className="size-5" />
+            </div>
+            {/* <span className="text-sm text-gray-400">New Chat</span> */}
+          </div>
         </header>
         <div className="px-4 ">
           {loading && (
@@ -83,7 +104,8 @@ function Home() {
           ) : (
             <>
               <AllChatsBox
-                allUsers={allUsers}
+                setChatType={setChatType}
+                allUsers={chatType === "all" ? allUsers : allActiveUsers}
                 setCurrentChatUser={setCurrentChatUser}
               />
             </>

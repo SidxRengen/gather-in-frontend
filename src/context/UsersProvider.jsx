@@ -13,6 +13,7 @@ import { useAuthContext } from "./AuthProvider";
 export const UserContext = createContext();
 function UsersProvider({ children }) {
   const [allUsers, setAllUsers] = useState([]);
+  const [allActiveUsers, setAllActiveUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuthContext();
@@ -20,11 +21,24 @@ function UsersProvider({ children }) {
     setLoading(true);
     setErrorMessage("");
     try {
-      const { data, success } = await userServices.getAllUsers();
-      if (success) {
-        setAllUsers(data);
+      const [response1, response2] = await Promise.all([
+        userServices.getAllUsers(),
+        userServices?.getActiveUsers(),
+      ]);
+      const { data:data2, success:success2 } = response2;
+      const { data:data1, success:success1 } =  response1;
+      console.log("data1 from context",data1)
+      if (success1) {
+        setAllUsers(data1);
       } else {
         setErrorMessage("Failed to fetch users");
+        return;
+      }
+      if (success2) {
+        setAllActiveUsers(data2);
+      } else {
+        setErrorMessage("Failed to fetch users");
+        return;
       }
     } catch (error) {
       setErrorMessage(error.message || "Failed to fetch users");
@@ -43,12 +57,10 @@ function UsersProvider({ children }) {
   const contextValue = useMemo(
     () => ({
       allUsers,
+      allActiveUsers,
       errorMessage,
       loading,
       fetchAllUsers,
-      getUserById: (id) => allUsers.find((user) => user.id === id),
-      getUsersCount: () => allUsers.length,
-      clearError: () => setErrorMessage(""),
     }),
     [allUsers, errorMessage, loading, fetchAllUsers]
   );

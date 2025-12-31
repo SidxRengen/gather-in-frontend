@@ -31,7 +31,7 @@ function ChatBox({ currentChatUser }) {
 
   useEffect(() => {
     getUserMessages();
-  }, []);
+  }, [currentChatUser]);
   useEffect(() => {
     bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -46,9 +46,20 @@ function ChatBox({ currentChatUser }) {
     client.connect({}, () => {
       setConnected(true);
 
-      client.subscribe(`/queue/messages/${currentChatUser.email}`, (msg) => {
-        console.log("message from socket", JSON.parse(msg.body));
-        setMessages((prev) => [...prev, JSON.parse(msg.body)]);
+      client.subscribe(`/queue/messages/${currentEmail}`, (msg) => {
+        const message = JSON.parse(msg.body);
+        console.log(
+          "message from socket",
+          message,
+          message?.senderEmail,
+          currentEmail
+        );
+        if (message?.senderEmail !== currentEmail) {
+          toast.info(
+            "message from " + message?.senderUserName + ": " + message.content
+          );
+        }
+        setMessages((prev) => [...prev, message]);
       });
     });
 
@@ -59,7 +70,6 @@ function ChatBox({ currentChatUser }) {
     };
   }, [currentChatUser.email]);
 
-  console.log(connected);
   const sendMessage = (text) => {
     if (!connected || !stompRef.current) {
       console.warn("STOMP not connected");
@@ -94,12 +104,12 @@ function ChatBox({ currentChatUser }) {
             right={message.senderEmail === currentEmail}
             message={message.content}
             userName={message.senderUserName}
+            timestamp={message.timestamp}
           />
         ))}
         <div ref={bottomRef} />
       </div>
 
-      {/* FLOATING FOOTER */}
       <div className="absolute bottom-2 left-0 right-0 z-10 flex justify-center">
         <ChatFooter sendMessage={sendMessage} />
       </div>

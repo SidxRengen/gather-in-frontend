@@ -5,10 +5,16 @@ import {
   Command,
   Frame,
   GalleryVerticalEnd,
+  GroupIcon,
   Map,
   PieChart,
   Settings2,
   SquareTerminal,
+  Star,
+  User2,
+  User2Icon,
+  UsersIcon,
+  UserStar,
 } from "lucide-react";
 
 import {
@@ -47,93 +53,6 @@ const data = {
       plan: "Free",
     },
   ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
   projects: [
     {
       name: "Design Engineering",
@@ -152,8 +71,28 @@ const data = {
     },
   ],
 };
-
 export function AppSidebar({ ...props }) {
+  const navMain = [
+    {
+      title: "Active Chats",
+      url: "#",
+      icon: User2Icon,
+      isActive: true,
+      items: props.allActiveUsers,
+    },
+    {
+      title: "Groups",
+      url: "#",
+      icon: UsersIcon,
+      items: [],
+    },
+    {
+      title: "Favourites",
+      url: "#",
+      icon: UserStar,
+      items: [],
+    },
+  ];
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -163,7 +102,10 @@ export function AppSidebar({ ...props }) {
         />
       </SidebarHeader>
       <SidebarContent>
-        {/* <NavMain items={data.navMain} /> */}
+        <NavMain
+          setCurrentChatUser={props?.setCurrentChatUser}
+          items={navMain}
+        />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
