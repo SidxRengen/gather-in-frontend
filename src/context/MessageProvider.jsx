@@ -1,19 +1,22 @@
-import React, { createContext } from "react";
+import authServices from "@/services/authServices";
+import { Stomp } from "@stomp/stompjs";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import SockJS from "sockjs-client";
+import { toast } from "sonner";
 
-const MessageContext = createContext({ children });
-function MessageProvider() {
+const MessageContext = createContext();
+function MessageProvider({ children }) {
+  const currentEmail = authServices?.getCurrentUser()?.email;
   const stompRef = useRef(null);
-
+  const [newMessage, setNewMessage] = useState({});
   useEffect(() => {
-    if (!currentChatUser?.email) return;
+    if (!currentEmail) return;
     const socket = new SockJS("http://localhost:8080/ws");
     const client = Stomp.over(socket);
 
     stompRef.current = client;
 
     client.connect({}, () => {
-      setConnected(true);
-
       client.subscribe(`/queue/messages/${currentEmail}`, (msg) => {
         const message = JSON.parse(msg.body);
         console.log(
@@ -27,19 +30,18 @@ function MessageProvider() {
             "message from " + message?.senderUserName + ": " + message.content
           );
         }
-        setMessages((prev) => [...prev, message]);
+        setNewMessage(message);
       });
     });
 
     return () => {
-      setConnected(false);
       client.disconnect();
       stompRef.current = null;
     };
-  }, [currentChatUser.email]);
+  }, [currentEmail]);
 
-  const sendMessage = (text) => {
-    if (!connected || !stompRef.current) {
+  const sendMessage = (text, receiverEmail) => {
+    if ( !stompRef.current) {
       console.warn("STOMP not connected");
       return;
     }
@@ -49,7 +51,7 @@ function MessageProvider() {
       {},
       JSON.stringify({
         content: text,
-        receiverEmail: currentChatUser.email,
+        receiverEmail,
         senderEmail: currentEmail,
       })
     );
@@ -57,12 +59,22 @@ function MessageProvider() {
     console.log(
       JSON.stringify({
         content: text,
-        receiverEmail: currentChatUser.email,
+        receiverEmail,
         senderEmail: currentEmail,
       })
     );
   };
-  return <MessageContext.Provider>{children}</MessageContext.Provider>;
+  const messageData = {
+    newMessage,
+    sendMessage,
+  };
+  return (
+    <MessageContext.Provider value={messageData}>
+      {children}
+    </MessageContext.Provider>
+  );
 }
-
+export const useMessageProvider = () => {
+  return useContext(MessageContext);
+};
 export default MessageProvider;

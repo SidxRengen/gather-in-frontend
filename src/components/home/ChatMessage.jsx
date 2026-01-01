@@ -35,16 +35,29 @@ function ChatMessage({ right, message, userName, photo, timestamp }) {
             /* <team.logo className="size-3.5 shrink-0" /> */ photo &&
             photo !== "" ? (
               <>
-                <img src={photo} alt="user_img" />
+                <img
+                  src={photo}
+                  alt="user_img"
+                  className="rounded-md h-full w-full object-cover"
+                />
               </>
             ) : (
-              <span className="text-sm">{userName[0].toUpperCase()}</span>
+              <span className="text-sm">
+                {userName && userName[0]?.toUpperCase()}
+              </span>
             )
           }
         </div>
-        <Item className={`flex flex-col ${right ?"items-end":"items-start"} gap-1`} variant="outline">
+        <Item
+          className={`flex flex-col ${
+            right ? "items-end" : "items-start"
+          } gap-1`}
+          variant="outline"
+        >
           <span>{message}</span>
-          <span className="text-xs text-secondary-foreground">{formatChatTime(timestamp)}</span>
+          <span className="text-xs text-secondary-foreground">
+            {formatChatTime(timestamp)}
+          </span>
         </Item>
       </div>
     </div>

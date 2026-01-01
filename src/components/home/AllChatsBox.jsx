@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { Link, ListStart, Smile, User } from "lucide-react";
 import authServices from "@/services/authServices";
 
-function AllChatsBox({ allUsers, setCurrentChatUser,setChatType }) {
+function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
   const formatChatTime = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -64,7 +64,7 @@ function AllChatsBox({ allUsers, setCurrentChatUser,setChatType }) {
                         <img
                           src={user.photo}
                           alt="user_img"
-                          className="rounded-md"
+                          className="rounded-md h-full w-full object-cover"
                         />
                       ) : (
                         <span className="text-2xl">

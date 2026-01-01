@@ -21,10 +21,12 @@ import AllChatsBox from "@/components/home/AllChatsBox";
 import ChatBox from "@/components/home/ChatBox";
 import { useUserContext } from "@/context/UsersProvider";
 import Loader from "@/components/home/Loader";
-import { PlusCircle } from "lucide-react";
+import { HomeIcon, PlusCircle } from "lucide-react";
+import ProfilePage from "@/components/home/ProfilePage";
 
 function Home() {
-  const { allActiveUsers, allUsers, errorMessage, loading, fetchAllUsers } =
+  const [activeTab, setActiveTab] = useState("home");
+  const { allActiveUsers, allUsers, errorMessage, loading, profile } =
     useUserContext();
   const [chatType, setChatType] = useState("active");
   const [currentChatUser, setCurrentChatUser] = useState(null);
@@ -40,6 +42,8 @@ function Home() {
       className={cn("w-lvw dark min-h-screen bg-background text-foreground")}
     >
       <AppSidebar
+        profilePhoto = {profile.photo}
+        setActiveTab={setActiveTab}
         setCurrentChatUser={setCurrentChatUser}
         allUsers={allUsers}
         toast={toast}
@@ -58,13 +62,24 @@ function Home() {
                 <BreadcrumbItem className="hidden md:block">
                   <div
                     onClick={() => {
+                      setActiveTab("home");
                       setChatType("active");
                       setCurrentChatUser(null);
                     }}
                   >
-                    <BreadcrumbLink>Start a Chat</BreadcrumbLink>
+                    <BreadcrumbLink>
+                      <HomeIcon size={16} />
+                    </BreadcrumbLink>
                   </div>
                 </BreadcrumbItem>
+                {activeTab === "profile" && (
+                  <>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbLink>profile</BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
                 {currentChatUser && (
                   <>
                     <BreadcrumbSeparator className="hidden md:block" />
@@ -88,7 +103,6 @@ function Home() {
             >
               <PlusCircle className="size-5" />
             </div>
-            {/* <span className="text-sm text-gray-400">New Chat</span> */}
           </div>
         </header>
         <div className="px-4 ">
@@ -97,19 +111,22 @@ function Home() {
               <Loader />
             </>
           )}
-          {!loading && currentChatUser ? (
-            <>
-              <ChatBox currentChatUser={currentChatUser} />
-            </>
-          ) : (
-            <>
-              <AllChatsBox
-                setChatType={setChatType}
-                allUsers={chatType === "all" ? allUsers : allActiveUsers}
-                setCurrentChatUser={setCurrentChatUser}
-              />
-            </>
-          )}
+          {activeTab === "home" &&
+            !loading &&
+            (currentChatUser ? (
+              <>
+                <ChatBox currentChatUser={currentChatUser} />
+              </>
+            ) : (
+              <>
+                <AllChatsBox
+                  setChatType={setChatType}
+                  allUsers={chatType === "all" ? allUsers : allActiveUsers}
+                  setCurrentChatUser={setCurrentChatUser}
+                />
+              </>
+            ))}
+          {activeTab === "profile" && !loading && <ProfilePage />}
         </div>
       </SidebarInset>
     </SidebarProvider>

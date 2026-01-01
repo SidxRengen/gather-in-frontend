@@ -13,21 +13,24 @@ import { useAuthContext } from "./AuthProvider";
 export const UserContext = createContext();
 function UsersProvider({ children }) {
   const [allUsers, setAllUsers] = useState([]);
+  const [profile, setProfile] = useState({});
   const [allActiveUsers, setAllActiveUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuthContext();
-  const fetchAllUsers = useCallback(async () => {
+  const fetchUserData = useCallback(async () => {
     setLoading(true);
     setErrorMessage("");
     try {
-      const [response1, response2] = await Promise.all([
+      const [response1, response2, response3] = await Promise.all([
         userServices.getAllUsers(),
         userServices?.getActiveUsers(),
+        userServices.getProfile(),
       ]);
-      const { data:data2, success:success2 } = response2;
-      const { data:data1, success:success1 } =  response1;
-      console.log("data1 from context",data1)
+      const { data: data3, success: success3 } = response3;
+      const { data: data2, success: success2 } = response2;
+      const { data: data1, success: success1 } = response1;
+      console.log("data1 from context", data1);
       if (success1) {
         setAllUsers(data1);
       } else {
@@ -37,7 +40,13 @@ function UsersProvider({ children }) {
       if (success2) {
         setAllActiveUsers(data2);
       } else {
-        setErrorMessage("Failed to fetch users");
+        setErrorMessage("Failed to fetch active users");
+        return;
+      }
+      if (success3) {
+        setProfile(data3);
+      } else {
+        setErrorMessage("Failed to fetch profile");
         return;
       }
     } catch (error) {
@@ -50,9 +59,9 @@ function UsersProvider({ children }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchAllUsers();
+      fetchUserData();
     }
-  }, [fetchAllUsers, isAuthenticated]);
+  }, [fetchUserData, isAuthenticated]);
 
   const contextValue = useMemo(
     () => ({
@@ -60,9 +69,11 @@ function UsersProvider({ children }) {
       allActiveUsers,
       errorMessage,
       loading,
-      fetchAllUsers,
+      fetchUserData,
+      profile,
+      setProfile
     }),
-    [allUsers, errorMessage, loading, fetchAllUsers]
+    [allUsers, profile, errorMessage, loading, fetchUserData,setProfile]
   );
 
   return (

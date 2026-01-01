@@ -7,4 +7,14 @@ export const userServices = {
   getActiveUsers: async () => {
     return await apiClient.get("/user/activeUsers");
   },
+  uploadProfilePicture: async (formData) => {
+    return await apiClient.post("/user/uploadPhoto", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+  getProfile: async () => {
+    return await apiClient.get("/user/profile");
+  },
 };

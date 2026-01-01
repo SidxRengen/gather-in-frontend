@@ -108,8 +108,8 @@ export function AppSidebar({ ...props }) {
         />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
+      <SidebarFooter >
+        <NavUser profilePhoto={props.profilePhoto} setActiveTab = {props.setActiveTab} user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

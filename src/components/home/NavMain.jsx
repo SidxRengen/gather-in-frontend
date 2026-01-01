@@ -49,21 +49,18 @@ export function NavMain({ items, setCurrentChatUser }) {
                       <SidebarMenuSubItem key={subItem.email}>
                         <SidebarMenuSubButton asChild>
                           <span onClick={() => setCurrentChatUser(subItem)}>
-                            <div
-                              className={` bg-amber-800 flex gap-2 size-5 items-center justify-center rounded-md border`}
-                            >
-                              {
-                                /* <team.logo className="size-3.5 shrink-0" /> */ subItem?.photo &&
-                                subItem?.photo !== "" ? (
-                                  <>
-                                    <img src={subItem?.photo} alt="user_img" />
-                                  </>
-                                ) : (
-                                  <span className="text-xs">
-                                    {subItem?.userName[0].toUpperCase()}
-                                  </span>
-                                )
-                              }
+                            <div className="bg-sidebar-primary flex size-5 items-center justify-center rounded-md border">
+                              {subItem?.photo ? (
+                                <img
+                                  src={subItem.photo}
+                                  alt="user_img"
+                                  className="rounded-md h-full w-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-xs">
+                                  {subItem?.userName[0].toUpperCase()}
+                                </span>
+                              )}
                             </div>
                             <span>{subItem.userName}</span>
                           </span>

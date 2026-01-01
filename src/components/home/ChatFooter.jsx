@@ -17,7 +17,7 @@ import { Button } from "../ui/button";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Textarea } from "../ui/textarea";
 
-function ChatFooter({ sendMessage, disabled = false }) {
+function ChatFooter({ sendMessage, disabled = false, receiverEmail }) {
   const [text, setText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
@@ -37,7 +37,7 @@ function ChatFooter({ sendMessage, disabled = false }) {
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage(text);
+      sendMessage(text, receiverEmail);
       setText("");
     }
   };
@@ -57,7 +57,7 @@ function ChatFooter({ sendMessage, disabled = false }) {
 
         <Button
           onClick={() => {
-            sendMessage(text);
+            sendMessage(text, receiverEmail);
             setText("");
           }}
           size="icon"

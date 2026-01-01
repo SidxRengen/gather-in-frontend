@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import authServices from "@/services/authServices";
 import { useAuthContext } from "@/context/AuthProvider";
 
-export function NavUser({ user }) {
+export function NavUser({profilePhoto, user,setActiveTab }) {
   const { isMobile } = useSidebar();
   const currentUser = authServices?.getCurrentUser();
   const authData = useAuthContext()
@@ -44,7 +44,7 @@ export function NavUser({ user }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={currentUser?.photo} alt={currentUser?.userName} />
+                <AvatarImage src={profilePhoto} alt={currentUser?.userName} />
                 <AvatarFallback className="rounded-lg">
                   {currentUser?.name[0]?.toUpperCase()}
                 </AvatarFallback>
@@ -85,7 +85,7 @@ export function NavUser({ user }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={()=>setActiveTab("profile")}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
