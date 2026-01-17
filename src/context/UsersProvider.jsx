@@ -15,6 +15,7 @@ function UsersProvider({ children }) {
   const [allUsers, setAllUsers] = useState([]);
   const [profile, setProfile] = useState({});
   const [allActiveUsers, setAllActiveUsers] = useState([]);
+  const [allActiveGroups, setAllActiveGroups] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuthContext();
@@ -22,11 +23,13 @@ function UsersProvider({ children }) {
     setLoading(true);
     setErrorMessage("");
     try {
-      const [response1, response2, response3] = await Promise.all([
+      const [response1, response2, response3, response4] = await Promise.all([
         userServices.getAllUsers(),
         userServices?.getActiveUsers(),
         userServices.getProfile(),
+        userServices.getActiveGroups(),
       ]);
+      const { data: data4, success: success4 } = response4;
       const { data: data3, success: success3 } = response3;
       const { data: data2, success: success2 } = response2;
       const { data: data1, success: success1 } = response1;
@@ -45,6 +48,12 @@ function UsersProvider({ children }) {
       }
       if (success3) {
         setProfile(data3);
+      } else {
+        setErrorMessage("Failed to fetch profile");
+        return;
+      }
+      if (success4) {
+        setAllActiveGroups(data4);
       } else {
         setErrorMessage("Failed to fetch profile");
         return;
@@ -71,9 +80,11 @@ function UsersProvider({ children }) {
       loading,
       fetchUserData,
       profile,
-      setProfile
+      setProfile,
+      allActiveGroups,
+      setAllActiveGroups
     }),
-    [allUsers, profile, errorMessage, loading, fetchUserData,setProfile]
+    [allUsers, profile, errorMessage, loading, fetchUserData, setProfile,allActiveGroups,allActiveUsers]
   );
 
   return (
@@ -84,9 +95,9 @@ function UsersProvider({ children }) {
 export const useUserContext = () => {
   const context = useContext(UserContext);
 
-  if (context === undefined) {
-    throw new Error("useUserContext must be used within a UsersProvider");
-  }
+  // if (context === undefined) {
+  //   throw new Error("useUserContext must be used within a UsersProvider");
+  // }
 
   return context;
 };

@@ -17,4 +17,7 @@ export const userServices = {
   getProfile: async () => {
     return await apiClient.get("/user/profile");
   },
+  getActiveGroups: async ()=>{
+    return await apiClient.get("/group/user")
+  }
 };

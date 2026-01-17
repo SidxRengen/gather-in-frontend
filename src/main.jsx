@@ -8,16 +8,19 @@ import UsersProvider from "./context/UsersProvider";
 import AuthProvider from "./context/AuthProvider";
 import { Toaster } from "sonner";
 import MessageProvider from "./context/MessageProvider";
+import GroupMessageProvider from "./context/GroupMessageProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <UsersProvider>
         <MessageProvider>
-          <BrowserRouter>
-            <App />
-            <Toaster />
-          </BrowserRouter>
+          <GroupMessageProvider>
+            <BrowserRouter>
+              <App />
+              <Toaster />
+            </BrowserRouter>
+          </GroupMessageProvider>
         </MessageProvider>
       </UsersProvider>
     </AuthProvider>

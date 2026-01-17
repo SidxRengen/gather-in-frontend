@@ -7,8 +7,16 @@ function ChatMessage({ right, message, userName, photo, timestamp }) {
     const date = new Date(timestamp);
     const now = new Date();
 
-    const isToday = date.toDateString() === now.toDateString();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
 
+    const isToday = date.toDateString() === today.toDateString();
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (isYesterday) {
+      return "yesterday";
+    }
     if (isToday) {
       return date.toLocaleTimeString("en-IN", {
         hour: "2-digit",

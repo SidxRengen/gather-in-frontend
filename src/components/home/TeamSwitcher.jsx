@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import authServices from "@/services/authServices";
 
-export function TeamSwitcher({ allUsers, setCurrentChatUser }) {
+export function TeamSwitcher({ allUsers, setCurrentChatUser, setActiveTab }) {
   const { isMobile } = useSidebar();
   return (
     <SidebarMenu>

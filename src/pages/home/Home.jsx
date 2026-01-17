@@ -21,15 +21,27 @@ import AllChatsBox from "@/components/home/AllChatsBox";
 import ChatBox from "@/components/home/ChatBox";
 import { useUserContext } from "@/context/UsersProvider";
 import Loader from "@/components/home/Loader";
-import { HomeIcon, PlusCircle } from "lucide-react";
+import { HomeIcon, PlusCircle, Settings } from "lucide-react";
 import ProfilePage from "@/components/home/ProfilePage";
+import AddGroup from "@/components/home/addGroup";
+import { Button } from "@/components/ui/button";
+import GroupSettings from "@/components/home/GroupSettings";
 
 function Home() {
   const [activeTab, setActiveTab] = useState("home");
-  const { allActiveUsers, allUsers, errorMessage, loading, profile } =
-    useUserContext();
+  const {
+    allActiveUsers,
+    allUsers,
+    errorMessage,
+    loading,
+    profile,
+    allActiveGroups,
+    setAllActiveGroups,
+  } = useUserContext();
   const [chatType, setChatType] = useState("active");
+  const [isGroup, setIsGroup] = useState(false);
   const [currentChatUser, setCurrentChatUser] = useState(null);
+  const [groupInfo, setGroupInfo] = useState({});
   useEffect(() => {
     if (errorMessage) {
       toast.error(errorMessage);
@@ -37,20 +49,23 @@ function Home() {
     }
     console.log("allUsers from home", allUsers);
   }, [allUsers]);
+  console.log("activeTab",activeTab)
   return (
     <SidebarProvider
       className={cn("w-lvw dark min-h-screen bg-background text-foreground")}
     >
       <AppSidebar
-        profilePhoto = {profile.photo}
+        setIsGroup={setIsGroup}
+        profilePhoto={profile.photo}
         setActiveTab={setActiveTab}
         setCurrentChatUser={setCurrentChatUser}
         allUsers={allUsers}
         toast={toast}
+        allActiveGroups={allActiveGroups}
         allActiveUsers={allActiveUsers}
       />
       <SidebarInset>
-        <header className="flex  h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -80,13 +95,29 @@ function Home() {
                     </BreadcrumbItem>
                   </>
                 )}
-                {currentChatUser && (
+                {activeTab === "addGroup" && (
                   <>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>
+                      <BreadcrumbLink>create group</BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
+                {currentChatUser && (
+                  <>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem onClick={() => setActiveTab("home")}>
                       <BreadcrumbLink>
                         {currentChatUser?.userName}
                       </BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </>
+                )}
+                {activeTab === "groupSettings" && (
+                  <>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbLink>Settings</BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
@@ -99,10 +130,24 @@ function Home() {
                 setChatType("all");
                 setCurrentChatUser(null);
               }}
-              className="bg-sidebar-primary  text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
+              className={` bg-sidebar-primary cursor-pointer
+               text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg`}
             >
               <PlusCircle className="size-5" />
             </div>
+            {isGroup && (
+              <Button
+                className="cursor-pointer"
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setActiveTab("groupSettings");
+                }}
+                aria-label="Submit"
+              >
+                <Settings />
+              </Button>
+            )}
           </div>
         </header>
         <div className="px-4 ">
@@ -115,7 +160,11 @@ function Home() {
             !loading &&
             (currentChatUser ? (
               <>
-                <ChatBox currentChatUser={currentChatUser} />
+                <ChatBox
+                  setGroupInfo={setGroupInfo}
+                  isGroup={isGroup}
+                  currentChatUser={currentChatUser}
+                />
               </>
             ) : (
               <>
@@ -126,7 +175,21 @@ function Home() {
                 />
               </>
             ))}
+
           {activeTab === "profile" && !loading && <ProfilePage />}
+          {activeTab === "addGroup" && !loading && (
+            <AddGroup
+              setActiveTab={setActiveTab}
+              setAllActiveGroups={setAllActiveGroups}
+            />
+          )}
+          {activeTab === "groupSettings" && !loading && (
+            <GroupSettings
+              allActiveUsers={allActiveUsers}
+              groupInfo={groupInfo}
+              setActiveTab={setActiveTab}
+            />
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>

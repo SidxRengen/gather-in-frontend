@@ -71,6 +71,7 @@ function ProfilePage() {
             <Button
               onClick={handleSave}
               variant="outline"
+              disabled={loading}
               className="relative text-chart-2 "
             >
               {loading ? <>Saving...</> : <>Save</>}

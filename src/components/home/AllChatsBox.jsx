@@ -15,7 +15,16 @@ function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
     const date = new Date(timestamp);
     const now = new Date();
 
-    const isToday = date.toDateString() === now.toDateString();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const isToday = date.toDateString() === today.toDateString();
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (isYesterday) {
+      return "Yesterday";
+    }
 
     if (isToday) {
       return date.toLocaleTimeString("en-IN", {

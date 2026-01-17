@@ -28,7 +28,7 @@ import { NavMain } from "./NavMain";
 import { NavProjects } from "./NavProjects";
 import { TeamSwitcher } from "./TeamSwitcher";
 import { NavUser } from "./NavUser";
-import { useEffect, useState } from "react";
+import { groupServices } from "@/services/groupServices";
 
 const data = {
   user: {
@@ -75,6 +75,7 @@ export function AppSidebar({ ...props }) {
   const navMain = [
     {
       title: "Active Chats",
+      type: "user",
       url: "#",
       icon: User2Icon,
       isActive: true,
@@ -82,17 +83,24 @@ export function AppSidebar({ ...props }) {
     },
     {
       title: "Groups",
+      type: "group",
       url: "#",
       icon: UsersIcon,
-      items: [],
+      items: props.allActiveGroups,
     },
     {
       title: "Favourites",
+      type: "favourite",
       url: "#",
       icon: UserStar,
       items: [],
     },
   ];
+  const handleCreateNew = (type) => {
+    if (type === "group") {
+      props.setActiveTab("addGroup");
+    }
+  };
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -103,13 +111,20 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain
+          setActiveTab={props.setActiveTab}
+          setIsGroup={props?.setIsGroup}
+          handleCreateNew={handleCreateNew}
           setCurrentChatUser={props?.setCurrentChatUser}
           items={navMain}
         />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      <SidebarFooter >
-        <NavUser profilePhoto={props.profilePhoto} setActiveTab = {props.setActiveTab} user={data.user} />
+      <SidebarFooter>
+        <NavUser
+          profilePhoto={props.profilePhoto}
+          setActiveTab={props.setActiveTab}
+          user={data.user}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

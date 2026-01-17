@@ -10,72 +10,72 @@ import React, {
 import SockJS from "sockjs-client";
 import { toast } from "sonner";
 
-const MessageContext = createContext();
-function MessageProvider({ children }) {
-  const currentEmail = authServices?.getCurrentUser()?.email;
+const GroupMessageContext = createContext();
+function GroupMessageProvider({ children }) {
+  const [group, setGroup] = useState({});
+
   const stompRef = useRef(null);
+  const currentEmail = authServices?.getCurrentUser()?.email;
+
   const [newMessage, setNewMessage] = useState({});
   useEffect(() => {
-    if (!currentEmail) return;
+    // console.log("start getting the messages 1")
+    if (group?.id === "") return;
+    // console.log("start getting the messages 2")
     const socket = new SockJS("http://localhost:8080/ws");
     const client = Stomp.over(socket);
-
     stompRef.current = client;
 
     client.connect({}, () => {
-      client.subscribe(`/queue/messages/${currentEmail}`, (msg) => {
+      client.subscribe(`/queue/group/message/${group?.id}`, (msg) => {
         const message = JSON.parse(msg.body);
-
-        if (message?.senderEmail !== currentEmail) {
+        if (message.senderEmail !== currentEmail) {
           toast.info(
-            `New message from ${message?.senderUserName}: ${message.content}`
+            `New message from ${message?.senderUserName} in ${group?.userName}: ${message.content}`
           );
         }
         setNewMessage(message);
       });
     });
 
+    // console.log("start getting the messages 3")
+
     return () => {
       client.disconnect();
       stompRef.current = null;
     };
-  }, [currentEmail]);
+  }, [group]);
 
-  const sendMessage = (text, receiverEmail) => {
+  const sendMessage = (text, groupId) => {
     if (!stompRef.current) {
       console.warn("STOMP not connected");
       return;
     }
 
     stompRef.current.send(
-      "/app/chat/send",
+      "/app/send/group/message",
       {},
       JSON.stringify({
         content: text,
-        receiverEmail,
-        senderEmail: currentEmail,
-      })
-    );
-
-    console.log(
-      JSON.stringify({
-        content: text,
-        receiverEmail,
-        senderEmail: currentEmail,
+        sender_email: currentEmail,
+        group_id: groupId,
       })
     );
   };
+
   const messageData = {
     newMessage,
     sendMessage,
+    setGroup,
   };
+
   return (
-    <MessageContext.Provider value={messageData}>
+    <GroupMessageContext.Provider value={messageData}>
       {children}
-    </MessageContext.Provider>
+    </GroupMessageContext.Provider>
   );
 }
-export const useMessageProvider = () => {
-  return useContext(MessageContext);
+export const useGroupMessageProvider = () => {
+  return useContext(GroupMessageContext);
 };
-export default MessageProvider;
+export default GroupMessageProvider;
