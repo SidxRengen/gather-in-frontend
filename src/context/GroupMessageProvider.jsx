@@ -22,7 +22,7 @@ function GroupMessageProvider({ children }) {
     // console.log("start getting the messages 1")
     if (group?.id === "") return;
     // console.log("start getting the messages 2")
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS(import.meta.env.VITE_API_BASE_URL);
     const client = Stomp.over(socket);
     stompRef.current = client;
 
