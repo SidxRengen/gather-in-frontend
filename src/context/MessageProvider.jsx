@@ -16,8 +16,10 @@ function MessageProvider({ children }) {
   const stompRef = useRef(null);
   const [newMessage, setNewMessage] = useState({});
   useEffect(() => {
+    const url = import.meta.env.VITE_API_BASE_URL;
+
     if (!currentEmail) return;
-    const socket = new SockJS(import.meta.env.VITE_API_BASE_URL);
+    const socket = new SockJS(url+"/ws");
     const client = Stomp.over(socket);
 
     stompRef.current = client;

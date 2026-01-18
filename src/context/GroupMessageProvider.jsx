@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const GroupMessageContext = createContext();
 function GroupMessageProvider({ children }) {
+  const url = import.meta.env.VITE_API_BASE_URL;
   const [group, setGroup] = useState({});
 
   const stompRef = useRef(null);
@@ -22,7 +23,7 @@ function GroupMessageProvider({ children }) {
     // console.log("start getting the messages 1")
     if (group?.id === "") return;
     // console.log("start getting the messages 2")
-    const socket = new SockJS(import.meta.env.VITE_API_BASE_URL);
+    const socket = new SockJS(url+"/ws");
     const client = Stomp.over(socket);
     stompRef.current = client;
 

@@ -23,7 +23,7 @@ import { useUserContext } from "@/context/UsersProvider";
 import Loader from "@/components/home/Loader";
 import { HomeIcon, PlusCircle, Settings } from "lucide-react";
 import ProfilePage from "@/components/home/ProfilePage";
-import AddGroup from "@/components/home/addGroup";
+import AddGroup from "@/components/home/AddGroup";
 import { Button } from "@/components/ui/button";
 import GroupSettings from "@/components/home/GroupSettings";
 
