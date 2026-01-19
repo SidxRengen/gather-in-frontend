@@ -41,7 +41,7 @@ function AddGroup({ setActiveTab, setAllActiveGroups }) {
     const formData = new FormData();
     formData.append(
       "data",
-      new Blob([JSON.stringify(groupData)], { type: "application/json" })
+      new Blob([JSON.stringify(groupData)], { type: "application/json" }),
     );
 
     if (file) {
@@ -55,10 +55,12 @@ function AddGroup({ setActiveTab, setAllActiveGroups }) {
         setAllActiveGroups((prev) => [
           ...prev,
           {
+            id: data.id,
             userName: groupData.name,
             photo: data.photoUrl,
             timestamp: data.timestamp,
             email: data.id,
+            timestamp: data?.timestamp,
           },
         ]);
         setActiveTab("home");

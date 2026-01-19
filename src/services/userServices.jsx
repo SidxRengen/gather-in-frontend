@@ -14,6 +14,13 @@ export const userServices = {
       },
     });
   },
+  uploadWallpaper: async (formData) => {
+    return await apiClient.post("/user/update-wallpaper", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
   getProfile: async () => {
     return await apiClient.get("/user/profile");
   },

@@ -62,7 +62,7 @@ function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
             return (
               <Item
                 key={user.email}
-                className="hover:bg-accent"
+                className="hover:backdrop-blur-sm rounded-lg"
                 onClick={() => setCurrentChatUser(user)}
               >
                 <ItemContent className="flex flex-row items-start justify-between gap-4 w-full">
