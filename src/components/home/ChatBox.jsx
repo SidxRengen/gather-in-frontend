@@ -32,7 +32,7 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
   const getUserMessages = async () => {
     try {
       const { message, success, data } = await messageServices.getMessages(
-        currentChatUser?.email
+        currentChatUser?.email,
       );
       if (success) {
         setMessages(data);
@@ -50,7 +50,7 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
         groupServices.getGroupMessages(currentChatUser?.id),
       ]);
       if (response1?.success) {
-        console.log("response1?.data",response1)
+        console.log("response1?.data", response1);
         setGroupInfo(response1?.data);
         console.log(response1?.data);
       }
@@ -83,8 +83,8 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
   }, [messages]);
   console.log("messages", messages);
   return (
-    <div className="relative flex flex-col h-[90vh]">
-      <div className="flex-1 px-4 overflow-auto flex flex-col gap-3 pb-32">
+    <div className="flex flex-col h-[calc(100dvh-56px)] md:h-[calc(100vh-64px)]">
+      <div className="flex-1 px-3 md:px-4 overflow-y-auto flex flex-col gap-3">
         {isGroup
           ? messages.map((message, index) => (
               <ChatMessage
@@ -113,7 +113,7 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="absolute bottom-2 left-0 right-0 z-10 flex justify-center">
+      <div className="border-t bg-background p-2">
         <ChatFooter
           isGroup={isGroup}
           sendMessage={sendMessage}
