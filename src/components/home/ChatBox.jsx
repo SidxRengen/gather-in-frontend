@@ -83,7 +83,7 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
   }, [messages]);
   console.log("messages", messages);
   return (
-    <div className="relative flex flex-col h-[93vh]">
+    <div className="relative flex flex-col h-[90vh]">
       <div className="flex-1 px-4 overflow-auto flex flex-col gap-3 pb-32">
         {isGroup
           ? messages.map((message, index) => (
