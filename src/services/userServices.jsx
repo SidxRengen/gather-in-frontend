@@ -21,10 +21,13 @@ export const userServices = {
       },
     });
   },
+  updateProfileSettings: async (body) => {
+    return await apiClient.post("/user/update-profile-settings", body);
+  },
   getProfile: async () => {
     return await apiClient.get("/user/profile");
   },
-  getActiveGroups: async ()=>{
-    return await apiClient.get("/group/user")
-  }
+  getActiveGroups: async () => {
+    return await apiClient.get("/group/user");
+  },
 };

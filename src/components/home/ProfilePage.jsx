@@ -4,10 +4,24 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { userServices } from "@/services/userServices";
 import { useUserContext } from "@/context/UsersProvider";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { cn } from "@/lib/utils";
 
 function ProfilePage() {
   const { setProfile } = useUserContext();
-
+  const [profileSettings, setProfileSettings] = useState({
+    opacity: 0,
+    blur: "none",
+  });
   const [file, setFile] = useState(null);
   const [wallpaperFile, setWallpaperFile] = useState(null);
 
@@ -17,7 +31,6 @@ function ProfilePage() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [wallpaperLoading, setWallpaperLoading] = useState(false);
 
-  // cleanup previews
   useEffect(() => {
     return () => {
       preview && URL.revokeObjectURL(preview);
@@ -92,7 +105,32 @@ function ProfilePage() {
       setWallpaperLoading(false);
     }
   };
+  const handleSettingsChange = (key, value) => {
+    setProfileSettings((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
+  const handleSaveProfileSettings = async () => {
+    try {
+      const { success, message } =
+        await userServices.updateProfileSettings(profileSettings);
+
+      if (success) {
+        toast.success(message || "Profile settings updated");
+        await refreshProfile();
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to update settings");
+    }
+  };
+  const blurMap = {
+    none: "",
+    sm: "blur-sm",
+    md: "blur-md",
+    lg: "blur-lg",
+  };
   return (
     <div className="w-full flex flex-col gap-6 p-4">
       {/* Profile */}
@@ -133,7 +171,6 @@ function ProfilePage() {
         </div>
       )}
 
-      {/* Wallpaper */}
       <div className="flex items-center justify-between">
         <span className="text-lg font-medium">Upload Wallpaper</span>
         <Button variant="outline" size="lg" className="relative">
@@ -170,6 +207,63 @@ function ProfilePage() {
           </Button>
         </div>
       )}
+      {/* Preview Box */}
+
+      {/* Opacity */}
+      <div className="flex items-center justify-between">
+        <span className="text-lg font-medium">Opacity (0–100)</span>
+
+        <Input
+          type="number"
+          min={0}
+          max={100}
+          value={profileSettings.opacity}
+          onChange={(e) =>
+            handleSettingsChange("opacity", Number(e.target.value))
+          }
+          className="w-1/4"
+        />
+      </div>
+
+      {/* Blur */}
+      <div className="flex items-center justify-between">
+        <span className="text-lg font-medium">Blur</span>
+
+        <Select
+          value={profileSettings.blur}
+          onValueChange={(value) => handleSettingsChange("blur", value)}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select Blur Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="sm">Small</SelectItem>
+              <SelectItem value="md">Medium</SelectItem>
+              <SelectItem value="lg">Large</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="rounded-lg border p-4">
+        <p className="mb-2 text-sm text-muted-foreground">
+          Live Preview (Upload Wallpaper first)
+        </p>
+        <div
+          className={cn(
+            "h-32 w-full rounded-md bg-cover bg-center transition-all",
+            blurMap[profileSettings.blur],
+          )}
+          style={{
+            backgroundImage: `url(${wallpaperPreview || preview || ""})`,
+            opacity: profileSettings.opacity / 100,
+          }}
+        />
+      </div>
+      <Button onClick={handleSaveProfileSettings} className="self-end">
+        Save Profile Settings
+      </Button>
     </div>
   );
 }

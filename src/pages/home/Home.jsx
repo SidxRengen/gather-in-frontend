@@ -58,6 +58,17 @@ function Home() {
         backgroundRepeat: "no-repeat",
       }
     : {};
+  const blurMap = {
+    none: "",
+    sm: "backdrop-blur-sm",
+    md: "backdrop-blur-md",
+    lg: "backdrop-blur-lg",
+  };
+  const opacityValue = Math.min(
+    Math.max((100 - Number(profile.opacity)) / 100, 0),
+    1,
+  );
+
   return (
     <SidebarProvider
       className={cn("w-lvw dark min-h-screen bg-background text-foreground")}
@@ -77,10 +88,26 @@ function Home() {
         className="relative min-h-screen overflow-hidden"
       >
         {wallpaperStyle && (
-          <div className="absolute inset-0 bg-black/40  pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Blur layer */}
+            {profile.blur !== "none" && (
+              <div
+                className={cn("absolute inset-0", blurMap[profile.blur])}
+                style={{ backgroundColor: "rgba(0,0,0,0.01)" }}
+              />
+            )}
+
+            {/* Dark overlay layer */}
+            {opacityValue > 0 && (
+              <div
+                className="absolute inset-0 bg-black"
+                style={{ opacity: opacityValue }}
+              />
+            )}
+          </div>
         )}
         <div className="relative z-10">
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <header className="flex h-14 md:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -139,7 +166,7 @@ function Home() {
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            <div className="flex gap-2 items-center ml-auto mr-10">
+            <div className="flex gap-2 items-center ml-auto mr-4 md:mr-10">
               <div
                 onClick={() => {
                   setChatType("all");

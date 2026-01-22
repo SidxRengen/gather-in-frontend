@@ -29,10 +29,10 @@ import { Link } from "react-router-dom";
 import authServices from "@/services/authServices";
 import { useAuthContext } from "@/context/AuthProvider";
 
-export function NavUser({profilePhoto, user,setActiveTab }) {
+export function NavUser({ profilePhoto, user, setActiveTab }) {
   const { isMobile } = useSidebar();
   const currentUser = authServices?.getCurrentUser();
-  const authData = useAuthContext()
+  const authData = useAuthContext();
   console.log(currentUser);
   return (
     <SidebarMenu>
@@ -64,19 +64,6 @@ export function NavUser({profilePhoto, user,setActiveTab }) {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.avatar} alt={user?.userName} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.userName}</span>
-                  <span className="truncate text-xs">{user?.userName}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
@@ -85,9 +72,9 @@ export function NavUser({profilePhoto, user,setActiveTab }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={()=>setActiveTab("profile")}>
+              <DropdownMenuItem onClick={() => setActiveTab("profile")}>
                 <BadgeCheck />
-                Account
+                Settings
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />

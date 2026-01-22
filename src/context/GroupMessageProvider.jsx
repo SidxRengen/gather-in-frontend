@@ -46,7 +46,7 @@ function GroupMessageProvider({ children }) {
       stompRef.current = null;
     };
   }, [group]);
-
+  
   const sendMessage = (text, groupId) => {
     if (!stompRef.current) {
       console.warn("STOMP not connected");
