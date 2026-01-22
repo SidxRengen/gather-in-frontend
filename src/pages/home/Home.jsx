@@ -115,7 +115,7 @@ function Home() {
               />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbItem className="block">
                     <div
                       onClick={() => {
                         setActiveTab("home");
@@ -130,7 +130,7 @@ function Home() {
                   </BreadcrumbItem>
                   {activeTab === "profile" && (
                     <>
-                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbSeparator className="block" />
                       <BreadcrumbItem>
                         <BreadcrumbLink>profile</BreadcrumbLink>
                       </BreadcrumbItem>
@@ -138,7 +138,7 @@ function Home() {
                   )}
                   {activeTab === "addGroup" && (
                     <>
-                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbSeparator className="block" />
                       <BreadcrumbItem>
                         <BreadcrumbLink>create group</BreadcrumbLink>
                       </BreadcrumbItem>
@@ -146,7 +146,7 @@ function Home() {
                   )}
                   {currentChatUser && (
                     <>
-                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbSeparator className="block" />
                       <BreadcrumbItem onClick={() => setActiveTab("home")}>
                         <BreadcrumbLink>
                           {currentChatUser?.userName}
@@ -156,7 +156,7 @@ function Home() {
                   )}
                   {activeTab === "groupSettings" && (
                     <>
-                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbSeparator className="block" />
                       <BreadcrumbItem>
                         <BreadcrumbLink>Settings</BreadcrumbLink>
                       </BreadcrumbItem>
