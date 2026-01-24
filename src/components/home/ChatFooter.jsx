@@ -51,7 +51,7 @@ function ChatFooter({
 
   return (
     <div className="absolute bottom-5 right-0 w-full flex justify-center">
-      <div className="w-[97%] rounded-xl  bg-white/10 backdrop-blur-md border border-white/30 shadow-lg p-3 flex gap-3 items-center">
+      <div className="w-[97%] rounded-xl  bg-black/10 backdrop-blur-sm border border-white/30 shadow-lg p-3 flex gap-3 items-center">
         <div className="flex-1">
           <Textarea
             value={text}
@@ -73,7 +73,8 @@ function ChatFooter({
           className="rounded-full"
           disabled={disabled}
         >
-          <Send size={16} />
+          <Send size={32} 
+           />
         </Button>
       </div>
     </div>

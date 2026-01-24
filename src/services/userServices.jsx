@@ -10,6 +10,7 @@ export const userServices = {
   uploadProfilePicture: async (formData) => {
     return await apiClient.post("/user/uploadPhoto", formData, {
       headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -17,6 +18,7 @@ export const userServices = {
   uploadWallpaper: async (formData) => {
     return await apiClient.post("/user/update-wallpaper", formData, {
       headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         "Content-Type": "multipart/form-data",
       },
     });

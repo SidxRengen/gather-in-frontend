@@ -10,7 +10,12 @@ import { Button } from "../ui/button";
 import { Link, ListStart, Smile, User } from "lucide-react";
 import authServices from "@/services/authServices";
 
-function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
+function AllChatsBox({
+  allUsers,
+  setCurrentChatUser,
+  setChatType,
+  setIsGroup,
+}) {
   const formatChatTime = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -39,36 +44,45 @@ function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
     });
   };
   return (
-    <div>
+    <div className="mt-2">
       {!allUsers || allUsers.length == 0 ? (
-        <div className=" text-gray-300 flex w-full justify-center gap-2 py-4">
-          <span className="text-xl">
-            No Active User, Start{" "}
+        <div className="flex w-full items-center justify-center gap-2 py-6 text-sm text-gray-400">
+          <span>
+            No active users.
             <span
               onClick={() => setChatType("all")}
-              className="cursor-pointer text-sidebar-primary underline underline-offset-2"
+              className="ml-1 cursor-pointer text-sidebar-primary hover:underline underline-offset-2 transition"
             >
-              New Chat
+              Start a new chat
             </span>
           </span>
-          <Smile size={24} />
+          <Smile size={16} className="text-gray-500" />
         </div>
       ) : (
         allUsers
           ?.filter(
-            (user) => user?.email !== authServices?.getCurrentUser().email
+            (user) => user?.email !== authServices?.getCurrentUser().email,
           )
           ?.map((user) => {
             return (
               <Item
                 key={user.email}
-                className="hover:backdrop-blur-sm rounded-lg"
-                onClick={() => setCurrentChatUser(user)}
+                onClick={() => {
+                  setIsGroup(user?.description ? true : false);
+                  setCurrentChatUser(user);
+                }}
+                className="
+                  rounded-lg
+                  bg-transparent
+                  hover:bg-white/5
+                  hover:backdrop-blur-sm
+                  transition
+                  cursor-pointer
+                "
               >
                 <ItemContent className="flex flex-row items-start justify-between gap-4 w-full">
-                  {/* Left section */}
                   <div className="flex gap-4 my-auto">
-                    <div className="bg-sidebar-primary flex size-10 items-center justify-center rounded-md border">
+                    <div className=" flex size-10 items-center justify-center rounded-md border">
                       {user?.photo ? (
                         <img
                           src={user.photo}
@@ -86,11 +100,11 @@ function AllChatsBox({ allUsers, setCurrentChatUser, setChatType }) {
                       <ItemTitle>{user?.userName}</ItemTitle>
                       <ItemDescription className="text-muted-foreground text-sm">
                         {user?.email}
+                        {user?.description}
                       </ItemDescription>
                     </div>
                   </div>
 
-                  {/* Right section */}
                   <div className="flex flex-col items-end gap-2">
                     {user?.timestamp && (
                       <span className="text-xs text-muted-foreground whitespace-nowrap">

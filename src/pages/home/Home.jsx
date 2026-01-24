@@ -20,11 +20,12 @@ import AllChatsBox from "@/components/home/AllChatsBox";
 import ChatBox from "@/components/home/ChatBox";
 import { useUserContext } from "@/context/UsersProvider";
 import Loader from "@/components/home/Loader";
-import { HomeIcon, PlusCircle, Settings } from "lucide-react";
+import { Bell, HomeIcon, PlusCircle, Settings } from "lucide-react";
 import ProfilePage from "@/components/home/ProfilePage";
 import AddGroup from "@/components/home/AddGroup";
 import { Button } from "@/components/ui/button";
 import GroupSettings from "@/components/home/GroupSettings";
+import NotificationPanel from "@/components/home/NotificationPanel";
 
 function Home() {
   const [activeTab, setActiveTab] = useState("home");
@@ -41,6 +42,18 @@ function Home() {
   const [isGroup, setIsGroup] = useState(false);
   const [currentChatUser, setCurrentChatUser] = useState(null);
   const [groupInfo, setGroupInfo] = useState({});
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const stored = localStorage.getItem("notifications");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+  }, [notifications]);
   useEffect(() => {
     if (errorMessage) {
       toast.error(errorMessage);
@@ -60,6 +73,7 @@ function Home() {
   const blurMap = {
     none: "",
     sm: "backdrop-blur-sm",
+    xs: "backdrop-blur-xs",
     md: "backdrop-blur-md",
     lg: "backdrop-blur-lg",
   };
@@ -69,9 +83,7 @@ function Home() {
   );
 
   return (
-    <SidebarProvider
-      className={cn("w-lvw dark min-h-screen bg-background text-foreground")}
-    >
+    <SidebarProvider className={cn("w-lvw  h-full")}>
       <AppSidebar
         setIsGroup={setIsGroup}
         profilePhoto={profile.photo}
@@ -106,7 +118,7 @@ function Home() {
           </div>
         )}
         <div className="relative z-10">
-          <header className="flex h-14 md:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <header className="flex bg-white/10 border-b border-gray-600 backdrop-blur-xs h-14 md:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -165,39 +177,51 @@ function Home() {
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            <div className="flex gap-2 items-center ml-auto mr-4 md:mr-10">
+            <div className="ml-auto mr-4 md:mr-10 flex items-center gap-2">
+              <NotificationPanel
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
+
               <div
                 onClick={() => {
                   setChatType("all");
                   setCurrentChatUser(null);
                 }}
-                className={` bg-sidebar-primary cursor-pointer
-               text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg`}
+                className="
+      flex size-8 cursor-pointer items-center justify-center rounded-lg
+      bg-primary/10 text-primary
+      hover:bg-primary/20
+      transition
+    "
               >
                 <PlusCircle className="size-5" />
               </div>
+
               {isGroup && (
                 <Button
-                  className="cursor-pointer"
-                  variant="outline"
                   size="icon"
-                  onClick={() => {
-                    setActiveTab("groupSettings");
-                  }}
-                  aria-label="Submit"
+                  onClick={() => setActiveTab("groupSettings")}
+                  className="
+        size-8
+        bg-slate-100 text-slate-700
+        hover:bg-slate-200
+        dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700
+      "
+                  aria-label="Group Settings"
                 >
-                  <Settings />
+                  <Settings className="size-4" />
                 </Button>
               )}
             </div>
           </header>
           <div className="px-4 ">
-            {loading && (
+            {loading ? (
               <>
                 <Loader />
               </>
-            )}
-            {activeTab === "home" &&
+            ) : (
+              activeTab === "home" &&
               !loading &&
               (currentChatUser ? (
                 <>
@@ -205,17 +229,24 @@ function Home() {
                     setGroupInfo={setGroupInfo}
                     isGroup={isGroup}
                     currentChatUser={currentChatUser}
+                    setNotifications={setNotifications}
                   />
                 </>
               ) : (
                 <>
                   <AllChatsBox
                     setChatType={setChatType}
-                    allUsers={chatType === "all" ? allUsers : allActiveUsers}
+                    setIsGroup={setIsGroup}
+                    allUsers={
+                      chatType === "all"
+                        ? allUsers
+                        : [...allActiveUsers, ...allActiveGroups]
+                    }
                     setCurrentChatUser={setCurrentChatUser}
                   />
                 </>
-              ))}
+              ))
+            )}
 
             {activeTab === "profile" && !loading && <ProfilePage />}
             {activeTab === "addGroup" && !loading && (

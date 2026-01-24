@@ -25,7 +25,7 @@ export function NavMain({
   handleCreateNew,
   items,
   setCurrentChatUser,
-  setActiveTab
+  setActiveTab,
 }) {
   return (
     <SidebarGroup>
@@ -54,14 +54,8 @@ export function NavMain({
                       className="flex px-1 items-center text-sm gap-2 "
                     >
                       {" "}
-                      <Button
-                        className="size-6 rounded-full"
-                        variant="outline"
-                        size="icon"
-                      >
-                        <Plus />
-                      </Button>
-                      <span>create new {item?.type}</span>
+                      {item?.type === "group" && <span>create new group</span>}
+                      {item?.type === "user" && <span>add new User</span>}
                     </div>
                   ) : (
                     <>
@@ -79,7 +73,7 @@ export function NavMain({
                                 setCurrentChatUser(subItem);
                               }}
                             >
-                              <div className=" bg-sidebar-primary flex size-5 items-center justify-center rounded-full border">
+                              <div className="  flex size-5 items-center justify-center rounded-full border">
                                 {subItem?.photo ? (
                                   <img
                                     src={subItem?.photo}
@@ -97,7 +91,10 @@ export function NavMain({
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
-                      <div className="px-1 flex items-center text-sm gap-2 ">
+                      <div
+                        onClick={() => handleCreateNew(item?.type)}
+                        className="px-1 flex items-center text-sm gap-2 "
+                      >
                         {" "}
                         <Button
                           className="size-6 rounded-full"

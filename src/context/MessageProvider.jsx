@@ -19,7 +19,7 @@ function MessageProvider({ children }) {
     const url = import.meta.env.VITE_API_BASE_URL;
 
     if (!currentEmail) return;
-    const socket = new SockJS(url+"/ws");
+    const socket = new SockJS(url + "/ws");
     const client = Stomp.over(socket);
 
     stompRef.current = client;
@@ -30,9 +30,10 @@ function MessageProvider({ children }) {
 
         if (message?.senderEmail !== currentEmail) {
           toast.info(
-            `New message from ${message?.senderUserName}: ${message.content}`
+            `New message from ${message?.senderUserName}: ${message.content}`,
           );
         }
+
         setNewMessage(message);
       });
     });
@@ -56,7 +57,7 @@ function MessageProvider({ children }) {
         content: text,
         receiverEmail,
         senderEmail: currentEmail,
-      })
+      }),
     );
 
     console.log(
@@ -64,11 +65,12 @@ function MessageProvider({ children }) {
         content: text,
         receiverEmail,
         senderEmail: currentEmail,
-      })
+      }),
     );
   };
   const messageData = {
     newMessage,
+
     sendMessage,
   };
   return (

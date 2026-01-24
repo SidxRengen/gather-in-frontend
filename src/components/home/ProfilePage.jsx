@@ -17,17 +17,17 @@ import {
 import { cn } from "@/lib/utils";
 
 function ProfilePage() {
-  const { setProfile } = useUserContext();
+  const { profile, setProfile } = useUserContext();
   const [profileSettings, setProfileSettings] = useState({
-    opacity: 0,
-    blur: "none",
+    opacity: profile?.opacity,
+    blur: profile?.blur,
   });
   const [file, setFile] = useState(null);
   const [wallpaperFile, setWallpaperFile] = useState(null);
 
   const [preview, setPreview] = useState(null);
   const [wallpaperPreview, setWallpaperPreview] = useState(null);
-
+  const MAX_SIZE = 4 * 1024 * 1024;
   const [profileLoading, setProfileLoading] = useState(false);
   const [wallpaperLoading, setWallpaperLoading] = useState(false);
 
@@ -54,13 +54,17 @@ function ProfilePage() {
   const handleWallpaperChange = (e) => {
     const selected = e.target.files[0];
     if (!selected) return;
-
+    if (selected.size > MAX_SIZE) {
+      toast.error("File size must be less than 4MB");
+      e.target.value = "";
+      return;
+    }
     setWallpaperFile(selected);
     setWallpaperPreview(URL.createObjectURL(selected));
   };
 
   const handleSaveProfile = async () => {
-    if (!file) return;
+    if (!wallpaperFile || wallpaperLoading) return;
 
     setProfileLoading(true);
     try {
@@ -127,13 +131,13 @@ function ProfilePage() {
   };
   const blurMap = {
     none: "",
+    xs: "blur-xs",
     sm: "blur-sm",
     md: "blur-md",
     lg: "blur-lg",
   };
   return (
     <div className="w-full flex flex-col gap-6 p-4">
-      {/* Profile */}
       <div className="flex items-center justify-between">
         <span className="text-lg font-medium">Upload Profile Picture</span>
         <Button variant="outline" size="lg" className="relative">
@@ -161,11 +165,7 @@ function ProfilePage() {
               <p>{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
             </div>
           </div>
-          <Button
-            onClick={handleSaveProfile}
-            variant="outline"
-            disabled={profileLoading}
-          >
+          <Button onClick={handleSaveProfile} variant="outline">
             {profileLoading ? "Saving..." : "Save"}
           </Button>
         </div>
@@ -198,20 +198,14 @@ function ProfilePage() {
               <p>{(wallpaperFile.size / (1024 * 1024)).toFixed(2)} MB</p>
             </div>
           </div>
-          <Button
-            onClick={handleSaveWallpaper}
-            variant="outline"
-            disabled={wallpaperLoading}
-          >
+          <Button onClick={handleSaveWallpaper} variant="outline">
             {wallpaperLoading ? "Saving..." : "Save Wallpaper"}
           </Button>
         </div>
       )}
-      {/* Preview Box */}
 
-      {/* Opacity */}
       <div className="flex items-center justify-between">
-        <span className="text-lg font-medium">Opacity (0–100)</span>
+        <span className="text-lg font-medium">Opacity (0-100)</span>
 
         <Input
           type="number"
@@ -225,7 +219,6 @@ function ProfilePage() {
         />
       </div>
 
-      {/* Blur */}
       <div className="flex items-center justify-between">
         <span className="text-lg font-medium">Blur</span>
 
@@ -239,6 +232,7 @@ function ProfilePage() {
           <SelectContent>
             <SelectGroup>
               <SelectItem value="none">None</SelectItem>
+              <SelectItem value="xs">Extra Small</SelectItem>
               <SelectItem value="sm">Small</SelectItem>
               <SelectItem value="md">Medium</SelectItem>
               <SelectItem value="lg">Large</SelectItem>

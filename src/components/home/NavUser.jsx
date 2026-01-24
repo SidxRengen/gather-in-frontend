@@ -65,7 +65,7 @@ export function NavUser({ profilePhoto, user, setActiveTab }) {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-not-allowed">
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
@@ -76,13 +76,9 @@ export function NavUser({ profilePhoto, user, setActiveTab }) {
                 <BadgeCheck />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-not-allowed">
                 <CreditCard />
                 Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

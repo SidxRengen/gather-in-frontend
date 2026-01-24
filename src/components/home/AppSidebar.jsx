@@ -88,17 +88,16 @@ export function AppSidebar({ ...props }) {
       icon: UsersIcon,
       items: props.allActiveGroups,
     },
-    {
-      title: "Favourites",
-      type: "favourite",
-      url: "#",
-      icon: UserStar,
-      items: [],
-    },
   ];
   const handleCreateNew = (type) => {
+    console.log(type);
     if (type === "group") {
       props.setActiveTab("addGroup");
+    }
+    if (type === "user") {
+      props.setCurrentChatUser(null);
+      props.setActiveTab("home");
+      props.setChatType("all");
     }
   };
   return (

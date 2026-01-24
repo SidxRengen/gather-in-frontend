@@ -12,10 +12,12 @@ import { groupServices } from "@/services/groupServices";
 import { useGroupMessageProvider } from "@/context/GroupMessageProvider";
 // import SockJS from "sockjs-client";
 
-function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
+function ChatBox({ currentChatUser, isGroup, setGroupInfo, setNotifications }) {
   const { profile } = useUserContext();
   const messageContext = useMessageProvider();
   const groupContext = useGroupMessageProvider();
+  const currentEmail = authServices?.getCurrentUser()?.email;
+
   console.log("isGroup", isGroup);
   const newMessage = !isGroup
     ? messageContext?.newMessage
@@ -25,7 +27,33 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
     : groupContext?.sendMessage;
 
   const bottomRef = useRef(null);
-  const currentEmail = authServices?.getCurrentUser()?.email;
+
+  useEffect(() => {
+    const msg = !isGroup
+      ? messageContext?.newMessage
+      : groupContext?.newMessage;
+
+    if (!msg || !msg.senderEmail) return;
+    if (msg?.senderEmail === currentEmail) return;
+
+    const notification = {
+      id: `${msg?.senderEmail}-${Date.now()}`,
+      message: msg?.content,
+      senderEmail: msg?.senderEmail,
+      senderUserName: msg?.senderUserName,
+      photo: msg?.photo ?? null,
+      groupName: isGroup ? msg?.groupName : null,
+      isGroup,
+      createdAt: new Date().toISOString(),
+    };
+
+    setNotifications((prev) => [...prev, notification]);
+  }, [
+    messageContext?.newMessage,
+    groupContext?.newMessage,
+    currentEmail,
+    isGroup,
+  ]);
   const [messages, setMessages] = useState([]);
   console.log(currentChatUser);
 
@@ -83,37 +111,49 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo }) {
   }, [messages]);
   console.log("messages", messages);
   return (
-    <div className="flex flex-col h-[calc(100dvh-56px)] md:h-[calc(100vh-64px)]">
+    <div className="flex pt-3 flex-col h-[calc(100dvh-56px)] md:h-[calc(100vh-64px)]">
       <div className="flex-1 px-3 md:px-4 overflow-y-auto flex flex-col gap-3">
-        {isGroup
-          ? messages.map((message, index) => (
-              <ChatMessage
-                key={index}
-                right={message.senderEmail === currentEmail}
-                message={message.content}
-                userName={message?.senderUserName}
-                timestamp={message.timestamp}
-                photo={message.photo}
-              />
-            ))
-          : messages.map((message, index) => (
-              <ChatMessage
-                key={index}
-                right={message.senderEmail === currentEmail}
-                message={message.content}
-                userName={message.senderUserName}
-                timestamp={message.timestamp}
-                photo={
-                  message.senderEmail === currentEmail
-                    ? profile?.photo
-                    : currentChatUser?.photo
-                }
-              />
-            ))}
+        {messages.length === 0 ? (
+          <div className="flex w-full justify-center items-center text-sm text-gray-400 py-6">
+            No messages yet. Say hello 👋
+          </div>
+        ) : isGroup ? (
+          messages.map(
+            (message, index) =>
+              message && (
+                <ChatMessage
+                  key={index}
+                  right={message?.senderEmail === currentEmail}
+                  message={message?.content}
+                  userName={message?.senderUserName}
+                  timestamp={message?.timestamp}
+                  photo={message?.photo}
+                />
+              ),
+          )
+        ) : (
+          messages.map(
+            (message, index) =>
+              message && (
+                <ChatMessage
+                  key={index}
+                  right={message?.senderEmail === currentEmail}
+                  message={message?.content}
+                  userName={message?.senderUserName}
+                  timestamp={message?.timestamp}
+                  photo={
+                    message?.senderEmail === currentEmail
+                      ? profile?.photo
+                      : currentChatUser?.photo
+                  }
+                />
+              ),
+          )
+        )}
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t bg-background p-2">
+      <div className="">
         <ChatFooter
           isGroup={isGroup}
           sendMessage={sendMessage}

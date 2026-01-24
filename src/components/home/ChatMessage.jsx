@@ -37,7 +37,7 @@ function ChatMessage({ right, message, userName, photo, timestamp }) {
         }`}
       >
         <div
-          className={` bg-sidebar-primary flex gap-2 size-6 items-center justify-center rounded-md border`}
+          className={` flex gap-2 size-6 items-center justify-center rounded-md border`}
         >
           {
             /* <team.logo className="size-3.5 shrink-0" /> */ photo &&
@@ -56,14 +56,15 @@ function ChatMessage({ right, message, userName, photo, timestamp }) {
             )
           }
         </div>
+
         <Item
           className={`flex flex-col ${
             right ? "items-end" : "items-start"
-          } gap-1`}
+          } gap-1 backdrop-blur-xs bg-black/20`}
           variant="outline"
         >
-          <span>{message}</span>
-          <span className="text-xs text-secondary-foreground">
+          <span className="font-medium ">{message}</span>
+          <span className="text-xs  text-gray-300">
             {formatChatTime(timestamp)}
           </span>
         </Item>

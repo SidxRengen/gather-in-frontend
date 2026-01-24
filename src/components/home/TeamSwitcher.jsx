@@ -32,7 +32,15 @@ export function TeamSwitcher({ allUsers, setCurrentChatUser, setActiveTab }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+              <div
+                className="
+    flex size-8 shrink-0
+    cursor-pointer items-center justify-center rounded-lg
+    bg-primary/10 text-primary
+    hover:bg-primary/20
+    transition
+  "
+              >
                 <PlusCircle className="size-5" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -44,7 +52,7 @@ export function TeamSwitcher({ allUsers, setCurrentChatUser, setActiveTab }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className={cn(
-              "dark bg-background text-foreground w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+              "dark bg-background text-foreground w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg",
             )}
             align="start"
             side={isMobile ? "bottom" : "right"}
@@ -55,7 +63,7 @@ export function TeamSwitcher({ allUsers, setCurrentChatUser, setActiveTab }) {
             </DropdownMenuLabel>
             {allUsers
               ?.filter(
-                (user) => user.email !== authServices?.getCurrentUser()?.email
+                (user) => user.email !== authServices?.getCurrentUser()?.email,
               )
               ?.map((user, index) => (
                 <DropdownMenuItem
@@ -65,12 +73,16 @@ export function TeamSwitcher({ allUsers, setCurrentChatUser, setActiveTab }) {
                   }}
                   className="gap-2 p-2"
                 >
-                  <div className="bg-sidebar-primary flex size-6 items-center justify-center rounded-md border">
+                  <div className="flex size-6 items-center justify-center rounded-md border">
                     {
                       /* <team.logo className="size-3.5 shrink-0" /> */ user?.photo &&
                       user?.photo !== "" ? (
                         <>
-                          <img src={user?.photo} alt="user_img" />
+                          <img
+                            className="h-full w-full object-cover rounded-md"
+                            src={user?.photo}
+                            alt="user_img"
+                          />
                         </>
                       ) : (
                         <>{user?.userName[0].toUpperCase()}</>
