@@ -1,7 +1,7 @@
 import React from "react";
 import { Item, ItemDescription, ItemTitle } from "../ui/item";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Copy } from "lucide-react";
+import { Copy, MapPin } from "lucide-react";
 
 function ChatMessage({ right, message, userName, photo, timestamp, image }) {
   const formatChatTime = (timestamp) => {
@@ -30,6 +30,18 @@ function ChatMessage({ right, message, userName, photo, timestamp, image }) {
       month: "short",
     });
   };
+
+  let locationData = null;
+
+  try {
+    const parsed = JSON.parse(message);
+    if (parsed?.type === "location") {
+      locationData = parsed;
+    }
+  } catch (e) {
+    locationData = null;
+  }
+
   return (
     <div className={`flex w-full ${right && "justify-end"}`}>
       <div
@@ -85,7 +97,7 @@ function ChatMessage({ right, message, userName, photo, timestamp, image }) {
             `}
             aria-label="Copy message"
           >
-            <Copy size={14} />
+            <Copy size={14} opacity={0.3}/>
           </button>
           {image && (
             <img
@@ -101,7 +113,30 @@ function ChatMessage({ right, message, userName, photo, timestamp, image }) {
             />
           )}
 
-          <span className="font-medium ">{message}</span>
+          {locationData ? (
+            <a
+              href={`https://www.google.com/maps?q=${locationData.lat},${locationData.lng}`}
+              target="_blank"
+              rel="noreferrer"
+              className="
+                flex items-center gap-2
+                rounded-lg
+                bg-blue-500/10
+                border border-blue-400/20
+                px-3 py-2
+                text-blue-400
+                hover:bg-blue-500/20
+                transition
+              "
+            >
+              <MapPin size={16} />
+              <span className="text-sm font-medium">
+                Shared Location
+              </span>
+            </a>
+          ) : (
+            <span className="font-medium">{message}</span>
+          )}
           <span className="text-xs  text-gray-300">
             {formatChatTime(timestamp)}
           </span>

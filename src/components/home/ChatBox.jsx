@@ -115,7 +115,7 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo, setNotifications }) {
   }, [messages.length]);
   console.log("messages", messages);
   return (
-    <div className="flex pt-3 flex-col h-[calc(100dvh-56px)] md:h-[calc(100vh-64px)]">
+    <div className="flex  pt-3 flex-col h-[calc(100dvh-56px)] md:h-[calc(100vh-64px)]">
       <div className="flex-1 px-3 md:px-4 overflow-y-auto pb-[100px] flex flex-col gap-3">
         {messages.length === 0 ? (
           <div className="flex w-full justify-center items-center text-sm text-gray-400 py-6">

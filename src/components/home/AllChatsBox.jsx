@@ -46,7 +46,7 @@ function AllChatsBox({
   return (
     <div className="mt-2">
       {!allUsers || allUsers.length == 0 ? (
-        <div className="flex w-full items-center justify-center gap-2 py-6 text-sm text-gray-400">
+        <div className="flex w-full items-center justify-center gap-2 py-8 text-sm text-gray-400 opacity-80">
           <span>
             No active users.
             <span
@@ -72,49 +72,52 @@ function AllChatsBox({
                   setCurrentChatUser(user);
                 }}
                 className="
-                  rounded-lg
+                  rounded-xl
                   bg-transparent
-                  hover:bg-white/5
-                  hover:backdrop-blur-sm
-                  transition
+                  hover:bg-white/6
+                  hover:backdrop-blur-md
+                  transition-all duration-200
                   cursor-pointer
+                  active:scale-[0.99]
                 "
               >
-                <ItemContent className="flex flex-row items-start justify-between gap-4 w-full">
+                <ItemContent className="flex flex-row items-center justify-between gap-4 w-full px-1 py-2">
                   <div className="flex gap-4 my-auto">
-                    <div className=" flex size-10 items-center justify-center rounded-md border">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 overflow-hidden">
                       {user?.photo ? (
                         <img
                           src={user.photo}
                           alt="user_img"
-                          className="rounded-md h-full w-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       ) : (
-                        <span className="text-2xl">
+                        <span className="text-lg font-semibold leading-none">
                           {user?.userName[0].toUpperCase()}
                         </span>
                       )}
                     </div>
 
                     <div className="flex flex-col">
-                      <ItemTitle>{user?.userName}</ItemTitle>
-                      <ItemDescription className="text-muted-foreground text-sm">
+                      <ItemTitle className="text-sm font-semibold leading-tight">
+                        {user?.userName}
+                      </ItemTitle>
+                      <ItemDescription className="text-muted-foreground text-xs leading-tight">
                         {user?.email}
                         {user?.description}
                       </ItemDescription>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-end justify-center gap-1">
                     {user?.timestamp && (
                       <span className="text-xs text-muted-foreground whitespace-nowrap">
                         {formatChatTime(user?.timestamp)}
                       </span>
                     )}
 
-                    <Button variant="outline" size="sm">
+                    {/* <Button variant="outline" size="sm">
                       <ListStart /> Chat
-                    </Button>
+                    </Button> */}
                   </div>
                 </ItemContent>
               </Item>

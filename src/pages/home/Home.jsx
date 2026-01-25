@@ -41,6 +41,7 @@ function Home() {
     allActiveGroups,
     setAllActiveGroups,
   } = useUserContext();
+  const isInitialLoading = loading && !allUsers?.length;
   const navigate = useNavigate();
   const [chatType, setChatType] = useState("active");
   const [isGroup, setIsGroup] = useState(false);
@@ -87,6 +88,11 @@ function Home() {
     Math.max((100 - Number(profile.opacity)) / 100, 0),
     1,
   );
+  useEffect(() => {
+    if (activeTab === "profile") {
+      setCurrentChatUser(null);
+    }
+  }, [activeTab]);
 
   return (
     <SidebarProvider className={cn("w-lvw  h-full")}>
@@ -139,12 +145,13 @@ function Home() {
               />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="block">
+                  <BreadcrumbItem className="block cursor-pointer">
                     <Tooltip label="Home">
                       <div
                         onClick={() => {
                           setActiveTab("home");
                           setChatType("active");
+                          setIsGroup(false);
                           setCurrentChatUser(null);
                         }}
                       >
@@ -157,7 +164,7 @@ function Home() {
                   {activeTab === "profile" && (
                     <>
                       <BreadcrumbSeparator className="block" />
-                      <BreadcrumbItem>
+                      <BreadcrumbItem className="block cursor-pointer">
                         <BreadcrumbLink>profile</BreadcrumbLink>
                       </BreadcrumbItem>
                     </>
@@ -192,21 +199,20 @@ function Home() {
               </Breadcrumb>
             </div>
             <div className="ml-auto mr-4 md:mr-10 flex items-center gap-2">
-              <Tooltip label="Notifications">
-                <div>
-                  <NotificationPanel
-                    notifications={notifications}
-                    setNotifications={setNotifications}
-                  />
-                </div>
-              </Tooltip>
+              <div>
+                <NotificationPanel
+                  notifications={notifications}
+                  setNotifications={setNotifications}
+                />
+              </div>
+
               <Tooltip label="New Chat">
                 <div
                   onClick={() => {
                     setChatType("all");
                     setCurrentChatUser(null);
                   }}
-                  className="
+                  className=" 
                 flex size-8 cursor-pointer items-center justify-center rounded-lg
                 bg-primary/10 text-primary
                 hover:bg-primary/20
@@ -221,6 +227,7 @@ function Home() {
                   size="icon"
                   onClick={() => setActiveTab("groupSettings")}
                   className="
+                  cursor-pointer
         size-8
         bg-slate-100 text-slate-700
         hover:bg-slate-200
@@ -234,51 +241,46 @@ function Home() {
             </div>
           </header>
           <div className="px-4 ">
-            {loading ? (
-              <>
-                <Loader />
-              </>
+            {isInitialLoading ? (
+              <Loader />
             ) : (
-              activeTab === "home" &&
-              !loading &&
-              (currentChatUser ? (
-                <>
-                  <ChatBox
-                    setGroupInfo={setGroupInfo}
-                    isGroup={isGroup}
-                    currentChatUser={currentChatUser}
-                    setNotifications={setNotifications}
-                  />
-                </>
-              ) : (
-                <>
-                  <AllChatsBox
-                    setChatType={setChatType}
-                    setIsGroup={setIsGroup}
-                    allUsers={
-                      chatType === "all"
-                        ? allUsers
-                        : [...allActiveUsers, ...allActiveGroups]
-                    }
-                    setCurrentChatUser={setCurrentChatUser}
-                  />
-                </>
-              ))
-            )}
+              <>
+                {activeTab === "home" &&
+                  (currentChatUser ? (
+                    <ChatBox
+                      setGroupInfo={setGroupInfo}
+                      isGroup={isGroup}
+                      currentChatUser={currentChatUser}
+                      setNotifications={setNotifications}
+                    />
+                  ) : (
+                    <AllChatsBox
+                      setChatType={setChatType}
+                      setIsGroup={setIsGroup}
+                      allUsers={
+                        chatType === "all"
+                          ? allUsers
+                          : [...allActiveUsers, ...allActiveGroups]
+                      }
+                      setCurrentChatUser={setCurrentChatUser}
+                    />
+                  ))}
 
-            {activeTab === "profile" && !loading && <ProfilePage />}
-            {activeTab === "addGroup" && !loading && (
-              <AddGroup
-                setActiveTab={setActiveTab}
-                setAllActiveGroups={setAllActiveGroups}
-              />
-            )}
-            {activeTab === "groupSettings" && !loading && (
-              <GroupSettings
-                allActiveUsers={allActiveUsers}
-                groupInfo={groupInfo}
-                setActiveTab={setActiveTab}
-              />
+                {activeTab === "profile" && <ProfilePage />}
+                {activeTab === "addGroup" && (
+                  <AddGroup
+                    setActiveTab={setActiveTab}
+                    setAllActiveGroups={setAllActiveGroups}
+                  />
+                )}
+                {activeTab === "groupSettings" && (
+                  <GroupSettings
+                    allActiveUsers={allActiveUsers}
+                    groupInfo={groupInfo}
+                    setActiveTab={setActiveTab}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>

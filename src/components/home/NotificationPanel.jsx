@@ -16,21 +16,24 @@ import {
 import { Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
+import { Tooltip } from "../other/Tooltip";
 
 function NotificationPanel({ notifications, setNotifications }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          size="icon"
-          className="size-8 bg-muted text-muted-foreground hover:bg-muted/80"
-        >
-          <Bell className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip label="Notifications">
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="icon"
+            className="cursor-pointer size-8 bg-muted text-muted-foreground hover:bg-muted/80"
+          >
+            <Bell className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+      </Tooltip>
       <DropdownMenuContent
         align="end"
-        className="w-80 p-2 backdrop-blur-xs bg-black/20 border border-white/10 shadow-lg rounded-xl"
+        className="w-80 max-h-[500px] p-2 backdrop-blur-xs bg-black/20 border border-white/10 shadow-lg rounded-xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">

@@ -137,10 +137,14 @@ function ProfilePage() {
     lg: "blur-lg",
   };
   return (
-    <div className="w-full flex flex-col gap-6 p-4">
+    <div className="w-full flex flex-col gap-8 px-3 md:px-6 py-4">
       <div className="flex items-center justify-between">
-        <span className="text-lg font-medium">Upload Profile Picture</span>
-        <Button variant="outline" size="lg" className="relative">
+        <span className="text-base md:text-lg font-semibold">Upload Profile Picture</span>
+        <Button
+          variant="outline"
+          size="lg"
+          className="relative px-6 active:scale-[0.98] transition"
+        >
           <input
             type="file"
             accept="image/*"
@@ -153,27 +157,35 @@ function ProfilePage() {
       </div>
 
       {preview && (
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src={preview}
               alt="Profile Preview"
               className="h-20 w-20 rounded-full object-cover border"
             />
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs md:text-sm text-muted-foreground leading-tight">
               <p>{file.name}</p>
               <p>{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
             </div>
           </div>
-          <Button onClick={handleSaveProfile} variant="outline">
+          <Button
+            onClick={handleSaveProfile}
+            variant="outline"
+            className="px-6 self-start md:self-auto"
+          >
             {profileLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-lg font-medium">Upload Wallpaper</span>
-        <Button variant="outline" size="lg" className="relative">
+        <span className="text-base md:text-lg font-semibold">Upload Wallpaper</span>
+        <Button
+          variant="outline"
+          size="lg"
+          className="relative px-6 active:scale-[0.98] transition"
+        >
           <input
             type="file"
             accept="image/*"
@@ -186,25 +198,29 @@ function ProfilePage() {
       </div>
 
       {wallpaperPreview && (
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src={wallpaperPreview}
               alt="Wallpaper Preview"
               className="h-20 w-32 rounded-md object-cover border"
             />
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs md:text-sm text-muted-foreground leading-tight">
               <p>{wallpaperFile.name}</p>
               <p>{(wallpaperFile.size / (1024 * 1024)).toFixed(2)} MB</p>
             </div>
           </div>
-          <Button onClick={handleSaveWallpaper} variant="outline">
+          <Button
+            onClick={handleSaveWallpaper}
+            variant="outline"
+            className="px-6 self-start md:self-auto"
+          >
             {wallpaperLoading ? "Saving..." : "Save Wallpaper"}
           </Button>
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <span className="text-lg font-medium">Opacity (0-100)</span>
 
         <Input
@@ -215,11 +231,11 @@ function ProfilePage() {
           onChange={(e) =>
             handleSettingsChange("opacity", Number(e.target.value))
           }
-          className="w-1/4"
+          className="w-full md:w-1/4"
         />
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <span className="text-lg font-medium">Blur</span>
 
         <Select
@@ -240,13 +256,13 @@ function ProfilePage() {
           </SelectContent>
         </Select>
       </div>
-      <div className="rounded-lg border p-4">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4">
         <p className="mb-2 text-sm text-muted-foreground">
           Live Preview (Upload Wallpaper first)
         </p>
         <div
           className={cn(
-            "h-32 w-full rounded-md bg-cover bg-center transition-all",
+            "h-36 w-full rounded-lg bg-cover bg-center transition-all",
             blurMap[profileSettings.blur],
           )}
           style={{
@@ -255,7 +271,10 @@ function ProfilePage() {
           }}
         />
       </div>
-      <Button onClick={handleSaveProfileSettings} className="self-end">
+      <Button
+        onClick={handleSaveProfileSettings}
+        className="self-stretch md:self-end px-8"
+      >
         Save Profile Settings
       </Button>
     </div>

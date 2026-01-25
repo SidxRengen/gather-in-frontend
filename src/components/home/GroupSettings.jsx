@@ -123,13 +123,18 @@ function GroupSettings({ groupInfo, allActiveUsers, setActiveTab }) {
   };
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      <div className="text-lg flex  justify-between">
-        <div className="flex justify-between items-center">
-          <span className="text-lg font-medium">Add Members:</span>
+    <div className="w-full pt-4 flex flex-col gap-6 px-2 md:px-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-base md:text-lg font-semibold">
+            Add Members
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Select users to add to this group
+          </span>
         </div>
 
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2 transition-shadow">
           <Select
             isMulti
             components={animatedComponents}
@@ -150,12 +155,12 @@ function GroupSettings({ groupInfo, allActiveUsers, setActiveTab }) {
           />
         </div>
       </div>
-      <div className="flex gap-4 justify-end">
+      <div className="flex flex-col-reverse md:flex-row gap-3 justify-end pt-2">
         <Button
           onClick={handleAddMembers}
           disabled={loading}
           variant="outline"
-          className="relative text-chart-2 text-lg"
+          className="relative text-chart-2 text-sm md:text-base px-6"
         >
           {loading ? <>Updating Members...</> : <>Update Members</>}
         </Button>
@@ -163,7 +168,7 @@ function GroupSettings({ groupInfo, allActiveUsers, setActiveTab }) {
           onClick={() => setActiveTab("home")}
           disabled={loading}
           variant="outline"
-          className="relative text-chart-5 text-lg"
+          className="relative text-chart-5 text-sm md:text-base px-6"
         >
           Cancel
         </Button>
