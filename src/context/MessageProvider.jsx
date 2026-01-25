@@ -1,4 +1,5 @@
 import authServices from "@/services/authServices";
+import { messageServices } from "@/services/messageServices";
 import { Stomp } from "@stomp/stompjs";
 import React, {
   createContext,
@@ -44,16 +45,29 @@ function MessageProvider({ children }) {
     };
   }, [currentEmail]);
 
-  const sendMessage = (text, receiverEmail) => {
+  const sendMessage = async (text, receiverEmail, file) => {
     if (!stompRef.current) {
       console.warn("STOMP not connected");
       return;
     }
-
+    let imageUrl = null;
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const { data, success } = await messageServices.getImageUrl(formData);
+        if (success) {
+          imageUrl = data?.photoUrl;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
     stompRef.current.send(
       "/app/chat/send",
       {},
       JSON.stringify({
+        image: imageUrl,
         content: text,
         receiverEmail,
         senderEmail: currentEmail,
@@ -70,7 +84,6 @@ function MessageProvider({ children }) {
   };
   const messageData = {
     newMessage,
-
     sendMessage,
   };
   return (

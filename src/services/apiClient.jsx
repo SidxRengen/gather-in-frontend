@@ -20,7 +20,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 apiClient.interceptors.response.use(
@@ -47,8 +47,7 @@ apiClient.interceptors.response.use(
     const errorObj = {
       success: false,
       status: response?.status,
-      message:
-        response?.data?.message || error.message || "Something went wrong",
+      message: response?.data?.message || "Unauthorized",
     };
 
     if (response?.status === 401) {
@@ -57,7 +56,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(errorObj);
-  }
+  },
 );
 
 export default apiClient;

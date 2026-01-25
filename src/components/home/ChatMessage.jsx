@@ -1,8 +1,9 @@
 import React from "react";
 import { Item, ItemDescription, ItemTitle } from "../ui/item";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { Copy } from "lucide-react";
 
-function ChatMessage({ right, message, userName, photo, timestamp }) {
+function ChatMessage({ right, message, userName, photo, timestamp, image }) {
   const formatChatTime = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -58,11 +59,48 @@ function ChatMessage({ right, message, userName, photo, timestamp }) {
         </div>
 
         <Item
-          className={`flex flex-col ${
+          className={`group relative flex flex-col ${
             right ? "items-end" : "items-start"
-          } gap-1 backdrop-blur-xs bg-black/20`}
+          } gap-1
+          bg-black/40
+          backdrop-blur-md
+          border border-white/10
+          shadow-lg`}
           variant="outline"
         >
+          <button
+            onClick={() => navigator.clipboard.writeText(message)}
+            className={`
+              absolute bottom-1
+              ${right ? "left-1" : "right-1"}
+              opacity-0 group-hover:opacity-100
+              transition
+              p-1
+              cursor-pointer
+              rounded-md
+              bg-black/60
+              text-gray-300
+              hover:text-white
+              hover:bg-white/10
+            `}
+            aria-label="Copy message"
+          >
+            <Copy size={14} />
+          </button>
+          {image && (
+            <img
+              src={image}
+              alt="chat_image"
+              className="
+                max-w-[220px]
+                max-h-[260px]
+                rounded-lg
+                object-cover
+                mb-1
+              "
+            />
+          )}
+
           <span className="font-medium ">{message}</span>
           <span className="text-xs  text-gray-300">
             {formatChatTime(timestamp)}

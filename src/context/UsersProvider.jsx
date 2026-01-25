@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { useAuthContext } from "./AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 export const UserContext = createContext();
 function UsersProvider({ children }) {
@@ -19,6 +20,7 @@ function UsersProvider({ children }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuthContext();
+  const [status, setStatus] = useState("200");
   const fetchUserData = useCallback(async () => {
     setLoading(true);
     setErrorMessage("");
@@ -59,6 +61,7 @@ function UsersProvider({ children }) {
         return;
       }
     } catch (error) {
+      setStatus(error.status);
       setErrorMessage(error.message || "Failed to fetch users");
       console.error("Error fetching users:", error);
     } finally {
@@ -82,9 +85,20 @@ function UsersProvider({ children }) {
       profile,
       setProfile,
       allActiveGroups,
-      setAllActiveGroups
+      setAllActiveGroups,
+      status,
     }),
-    [allUsers, profile, errorMessage, loading, fetchUserData, setProfile,allActiveGroups,allActiveUsers]
+    [
+      allUsers,
+      profile,
+      errorMessage,
+      loading,
+      status,
+      fetchUserData,
+      setProfile,
+      allActiveGroups,
+      allActiveUsers,
+    ],
   );
 
   return (

@@ -26,6 +26,8 @@ import AddGroup from "@/components/home/AddGroup";
 import { Button } from "@/components/ui/button";
 import GroupSettings from "@/components/home/GroupSettings";
 import NotificationPanel from "@/components/home/NotificationPanel";
+import { Tooltip } from "@/components/other/Tooltip";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [activeTab, setActiveTab] = useState("home");
@@ -35,9 +37,11 @@ function Home() {
     errorMessage,
     loading,
     profile,
+    status,
     allActiveGroups,
     setAllActiveGroups,
   } = useUserContext();
+  const navigate = useNavigate();
   const [chatType, setChatType] = useState("active");
   const [isGroup, setIsGroup] = useState(false);
   const [currentChatUser, setCurrentChatUser] = useState(null);
@@ -55,12 +59,14 @@ function Home() {
     localStorage.setItem("notifications", JSON.stringify(notifications));
   }, [notifications]);
   useEffect(() => {
-    if (errorMessage) {
-      toast.error(errorMessage);
-      return;
-    }
-    console.log("allUsers from home", allUsers);
-  }, [allUsers]);
+    if (!errorMessage) return;
+
+    // if (status === 403 || status === 401) {
+    //   navigate("/", { replace: true });
+    // }
+
+    toast.error(errorMessage);
+  }, [errorMessage, status, navigate]);
   console.log("activeTab", activeTab);
   const wallpaperStyle = profile?.wallpaper
     ? {
@@ -90,6 +96,7 @@ function Home() {
         setActiveTab={setActiveTab}
         setCurrentChatUser={setCurrentChatUser}
         allUsers={allUsers}
+        setChatType={setChatType}
         toast={toast}
         allActiveGroups={allActiveGroups}
         allActiveUsers={allActiveUsers}
@@ -118,7 +125,12 @@ function Home() {
           </div>
         )}
         <div className="relative z-10">
-          <header className="flex bg-white/10 border-b border-gray-600 backdrop-blur-xs h-14 md:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <header
+            className="flex     bg-black/40
+          backdrop-blur-md
+          border-b border-white/10
+          shadow-lg h-14 md:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12"
+          >
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -128,17 +140,19 @@ function Home() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="block">
-                    <div
-                      onClick={() => {
-                        setActiveTab("home");
-                        setChatType("active");
-                        setCurrentChatUser(null);
-                      }}
-                    >
-                      <BreadcrumbLink>
-                        <HomeIcon size={16} />
-                      </BreadcrumbLink>
-                    </div>
+                    <Tooltip label="Home">
+                      <div
+                        onClick={() => {
+                          setActiveTab("home");
+                          setChatType("active");
+                          setCurrentChatUser(null);
+                        }}
+                      >
+                        <BreadcrumbLink>
+                          <HomeIcon size={16} />
+                        </BreadcrumbLink>
+                      </div>
+                    </Tooltip>
                   </BreadcrumbItem>
                   {activeTab === "profile" && (
                     <>
@@ -178,26 +192,30 @@ function Home() {
               </Breadcrumb>
             </div>
             <div className="ml-auto mr-4 md:mr-10 flex items-center gap-2">
-              <NotificationPanel
-                notifications={notifications}
-                setNotifications={setNotifications}
-              />
-
-              <div
-                onClick={() => {
-                  setChatType("all");
-                  setCurrentChatUser(null);
-                }}
-                className="
-      flex size-8 cursor-pointer items-center justify-center rounded-lg
-      bg-primary/10 text-primary
-      hover:bg-primary/20
-      transition
-    "
-              >
-                <PlusCircle className="size-5" />
-              </div>
-
+              <Tooltip label="Notifications">
+                <div>
+                  <NotificationPanel
+                    notifications={notifications}
+                    setNotifications={setNotifications}
+                  />
+                </div>
+              </Tooltip>
+              <Tooltip label="New Chat">
+                <div
+                  onClick={() => {
+                    setChatType("all");
+                    setCurrentChatUser(null);
+                  }}
+                  className="
+                flex size-8 cursor-pointer items-center justify-center rounded-lg
+                bg-primary/10 text-primary
+                hover:bg-primary/20
+                transition
+                "
+                >
+                  <PlusCircle className="size-5" />
+                </div>
+              </Tooltip>
               {isGroup && (
                 <Button
                   size="icon"

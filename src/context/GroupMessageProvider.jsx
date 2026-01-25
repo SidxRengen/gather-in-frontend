@@ -1,4 +1,5 @@
 import authServices from "@/services/authServices";
+import { messageServices } from "@/services/messageServices";
 import { Stomp } from "@stomp/stompjs";
 import React, {
   createContext,
@@ -23,7 +24,7 @@ function GroupMessageProvider({ children }) {
     // console.log("start getting the messages 1")
     if (group?.id === "") return;
     // console.log("start getting the messages 2")
-    const socket = new SockJS(url+"/ws");
+    const socket = new SockJS(url + "/ws");
     const client = Stomp.over(socket);
     stompRef.current = client;
 
@@ -32,7 +33,7 @@ function GroupMessageProvider({ children }) {
         const message = JSON.parse(msg.body);
         if (message.senderEmail !== currentEmail) {
           toast.info(
-            `New message from ${message?.senderUserName} in ${group?.userName}: ${message.content}`
+            `New message from ${message?.senderUserName} in ${group?.userName}: ${message.content}`,
           );
         }
         setNewMessage(message);
@@ -46,21 +47,27 @@ function GroupMessageProvider({ children }) {
       stompRef.current = null;
     };
   }, [group]);
-  
-  const sendMessage = (text, groupId) => {
+
+  const sendMessage = async (text, groupId, file) => {
     if (!stompRef.current) {
       console.warn("STOMP not connected");
       return;
     }
-
+    let imageUrl = null;
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      imageUrl = await messageServices.getImageUrl(formData);
+    }
     stompRef.current.send(
       "/app/send/group/message",
       {},
       JSON.stringify({
+        image: imageUrl,
         content: text,
         sender_email: currentEmail,
         group_id: groupId,
-      })
+      }),
     );
   };
 
