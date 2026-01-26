@@ -16,6 +16,7 @@ function MessageProvider({ children }) {
   const currentEmail = authServices?.getCurrentUser()?.email;
   const stompRef = useRef(null);
   const [newMessage, setNewMessage] = useState({});
+  const [messageLoading, setMessageLoading] = useState(false);
   useEffect(() => {
     const url = import.meta.env.VITE_API_BASE_URL;
 
@@ -50,42 +51,48 @@ function MessageProvider({ children }) {
       console.warn("STOMP not connected");
       return;
     }
-    let imageUrl = null;
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
+
+    setMessageLoading(true);
+
+    try {
+      let imageUrl = null;
+
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
         const { data, success } = await messageServices.getImageUrl(formData);
+
         if (success) {
           imageUrl = data?.photoUrl;
         }
-      } catch (error) {
-        console.log(error);
       }
-    }
-    stompRef.current.send(
-      "/app/chat/send",
-      {},
-      JSON.stringify({
-        image: imageUrl,
-        content: text,
-        receiverEmail,
-        senderEmail: currentEmail,
-      }),
-    );
 
-    console.log(
-      JSON.stringify({
-        content: text,
-        receiverEmail,
-        senderEmail: currentEmail,
-      }),
-    );
+      stompRef.current.send(
+        "/app/chat/send",
+        {},
+        JSON.stringify({
+          image: imageUrl,
+          content: text,
+          receiverEmail,
+          senderEmail: currentEmail,
+        }),
+      );
+
+      setTimeout(() => {
+        setMessageLoading(false);
+      }, 500);
+    } catch (error) {
+      console.log(error);
+      setMessageLoading(false);
+    }
   };
   const messageData = {
     newMessage,
     sendMessage,
+    messageLoading,
   };
+
   return (
     <MessageContext.Provider value={messageData}>
       {children}

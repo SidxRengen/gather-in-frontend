@@ -15,7 +15,7 @@ const GroupMessageContext = createContext();
 function GroupMessageProvider({ children }) {
   const url = import.meta.env.VITE_API_BASE_URL;
   const [group, setGroup] = useState({});
-
+  const [groupMessageLoading, setGroupMessageLoading] = useState(false);
   const stompRef = useRef(null);
   const currentEmail = authServices?.getCurrentUser()?.email;
 
@@ -53,28 +53,48 @@ function GroupMessageProvider({ children }) {
       console.warn("STOMP not connected");
       return;
     }
-    let imageUrl = null;
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      imageUrl = await messageServices.getImageUrl(formData);
+
+    setGroupMessageLoading(true);
+
+    try {
+      let imageUrl = null;
+
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const { data, success } = await messageServices.getImageUrl(formData);
+
+        if (success) {
+          imageUrl = data?.photoUrl;
+        }
+      }
+
+      stompRef.current.send(
+        "/app/send/group/message",
+        {},
+        JSON.stringify({
+          image: imageUrl,
+          content: text,
+          sender_email: currentEmail,
+          group_id: groupId,
+        }),
+      );
+      setTimeout(() => {
+        setGroupMessageLoading(false);
+      }, 500);
+    } catch (error) {
+      console.error("Send group message failed:", error);
+    } finally {
+      setGroupMessageLoading(false);
     }
-    stompRef.current.send(
-      "/app/send/group/message",
-      {},
-      JSON.stringify({
-        image: imageUrl,
-        content: text,
-        sender_email: currentEmail,
-        group_id: groupId,
-      }),
-    );
   };
 
   const messageData = {
     newMessage,
     sendMessage,
     setGroup,
+    groupMessageLoading,
   };
 
   return (

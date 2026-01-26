@@ -5,6 +5,7 @@ import {
   Mic,
   Smile,
   Send,
+  Loader2,
   MapPin,
   Video,
   MoreVertical,
@@ -18,6 +19,7 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import { Textarea } from "../ui/textarea";
 import { Tooltip } from "../other/Tooltip";
 import { toast } from "sonner";
+import { EMOJIS } from "@/constants/data";
 const IconButton = React.forwardRef(({ icon, onClick }, ref) => {
   return (
     <button
@@ -41,131 +43,16 @@ const IconButton = React.forwardRef(({ icon, onClick }, ref) => {
 
 IconButton.displayName = "IconButton";
 
-const EMOJIS = [
-  // smileys & emotions
-  "😀",
-  "😃",
-  "😄",
-  "😁",
-  "😆",
-  "😅",
-  "😂",
-  "🤣",
-  "😊",
-  "🙂",
-  "😉",
-  "😍",
-  "🥰",
-  "😘",
-  "😗",
-  "😙",
-  "😚",
-  "😋",
-  "😎",
-  "🤓",
-  "🤔",
-  "🫡",
-  "😐",
-  "😑",
-  "😶",
-  "🙄",
-  "😏",
-  "😣",
-  "😥",
-  "😮",
-  "😯",
-  "😪",
-  "😫",
-  "🥱",
-  "😴",
-  "😌",
-  "😛",
-  "😜",
-  "😝",
-  "🤤",
-  "😭",
-  "😢",
-  "😤",
-  "😠",
-  "😡",
-  "🤯",
-  "😳",
-  "🥵",
-  "🥶",
-  "😱",
-
-  // gestures & people
-  "👍",
-  "👎",
-  "👌",
-  "🤌",
-  "🤞",
-  "✌️",
-  "🤟",
-  "🤘",
-  "👏",
-  "🙌",
-  "🙏",
-  "💪",
-  "🫶",
-  "👀",
-  "🧠",
-  "🫀",
-  "🦾",
-  "🦿",
-
-  // hearts & symbols
-  "❤️",
-  "🧡",
-  "💛",
-  "💚",
-  "💙",
-  "💜",
-  "🤍",
-  "🖤",
-  "🤎",
-  "💔",
-  "❤️‍🔥",
-  "❤️‍🩹",
-  "💯",
-  "✨",
-  "⭐",
-  "🌟",
-  "🔥",
-  "⚡",
-  "💥",
-
-  // fun & misc
-  "🎉",
-  "🎊",
-  "🎈",
-  "🎁",
-  "🎶",
-  "🎵",
-  "🎮",
-  "🏆",
-  "🚀",
-  "🌈",
-  "☕",
-  "🍕",
-  "🍔",
-  "🍟",
-  "🍿",
-  "🍩",
-  "🍪",
-  "🍫",
-  "🍻",
-  "🥂",
-];
-
 function ChatFooter({
   groupId,
   sendMessage,
+  loading,
   isGroup,
   disabled = false,
   receiverEmail,
   senderEmail,
 }) {
+  console.log("loading here...", loading);
   const [location, setLocation] = useState(null);
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -175,6 +62,7 @@ function ChatFooter({
   const emojiRef = useRef(null);
   const textareaRef = useRef(null);
   const handleKeyPress = (e) => {
+    if (loading) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (text.trim().length == 0 && !file) {
@@ -227,9 +115,10 @@ function ChatFooter({
     });
   };
   const handleSend = () => {
+    if (loading) return;
     if (!text.trim() && !file && !location) return;
-    if(text.length>1000){
-      toast.error("text cannot exceed 1000 characters")
+    if (text.length > 1000) {
+      toast.error("text cannot exceed 1000 characters");
       return;
     }
     let finalText = text;
@@ -364,6 +253,7 @@ function ChatFooter({
               <IconButton
                 icon={<Smile size={18} />}
                 onClick={() => {
+                  if (loading) return;
                   if (!location) setShowEmojiPicker((p) => !p);
                 }}
               />
@@ -418,6 +308,7 @@ function ChatFooter({
               <IconButton
                 icon={<ImageIcon size={18} />}
                 onClick={() => {
+                  if (loading) return;
                   if (!location) fileRef.current.click();
                 }}
               />
@@ -428,6 +319,7 @@ function ChatFooter({
               <IconButton
                 icon={<MapPin size={18} />}
                 onClick={() => {
+                  if (loading) return;
                   setText("");
                   navigator.geolocation.getCurrentPosition(
                     (pos) => {
@@ -449,7 +341,7 @@ function ChatFooter({
         <Textarea
           ref={textareaRef}
           value={text}
-          disabled={location}
+          disabled={location || loading}
           onKeyDown={handleKeyPress}
           onChange={(e) => setText(e.target.value)}
           placeholder="Type your message here."
@@ -476,9 +368,13 @@ function ChatFooter({
           cursor-pointer
           hover:bg-chart-2/70
           "
-            disabled={disabled}
+            disabled={disabled || loading}
           >
-            <Send size={20} />
+            {loading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <Send size={20} />
+            )}
           </Button>
         </Tooltip>
         <input
@@ -487,7 +383,7 @@ function ChatFooter({
           type="file"
           accept="image/*"
           hidden
-          disabled={!!location}
+          disabled={!!location || loading}
         />
       </div>
     </div>

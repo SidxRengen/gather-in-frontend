@@ -161,6 +161,9 @@ function ChatBox({ currentChatUser, isGroup, setGroupInfo, setNotifications }) {
 
       <div className="">
         <ChatFooter
+          loading={
+            groupContext.groupMessageLoading || messageContext.messageLoading
+          }
           isGroup={isGroup}
           sendMessage={sendMessage}
           groupId={currentChatUser?.id}

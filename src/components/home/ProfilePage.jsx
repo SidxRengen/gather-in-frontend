@@ -64,7 +64,7 @@ function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
-    if (!wallpaperFile || wallpaperLoading) return;
+    if (profileLoading || !preview) return;
 
     setProfileLoading(true);
     try {
@@ -139,7 +139,9 @@ function ProfilePage() {
   return (
     <div className="w-full flex flex-col gap-8 px-3 md:px-6 py-4">
       <div className="flex items-center justify-between">
-        <span className="text-base md:text-lg font-semibold">Upload Profile Picture</span>
+        <span className="text-base md:text-lg font-semibold">
+          Upload Profile Picture
+        </span>
         <Button
           variant="outline"
           size="lg"
@@ -180,7 +182,9 @@ function ProfilePage() {
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-base md:text-lg font-semibold">Upload Wallpaper</span>
+        <span className="text-base md:text-lg font-semibold">
+          Upload Wallpaper
+        </span>
         <Button
           variant="outline"
           size="lg"
@@ -266,7 +270,7 @@ function ProfilePage() {
             blurMap[profileSettings.blur],
           )}
           style={{
-            backgroundImage: `url(${wallpaperPreview || preview || ""})`,
+            backgroundImage: `url(${wallpaperPreview || ""})`,
             opacity: profileSettings.opacity / 100,
           }}
         />
